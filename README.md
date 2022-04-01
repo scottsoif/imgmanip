@@ -1,16 +1,16 @@
 # imgmanip-
 Design Using C++ Final Project
 
-### Project structure
+## Project structure
 
-## Dependencies
+### Dependencies
 Install future dependencies into the `lib` folder. Currently, there is only `armidillo` for linear algebra. 
 
-## Makefile
+### Makefile
 For future tests, write additional make entry in Makefile.
 
-## imgmanip
+### imgmanip
 Each subdirectory in `imgmanip` is a "module." Remember to update Makefile when you add a new "module." 
 
-## tests
+### tests
 Contains test executable. 
