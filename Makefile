@@ -16,23 +16,10 @@ main: main.o imgio.o
 main.o: main.cpp imgmanip/imgio/imgio.h
 	$(CC) $(CFLAGS) main.cpp
 
-# compiling the imgio module
+# compiling the imgio "module"
 imgio.o: imgmanip/imgio/imgio.cpp imgmanip/imgio/imgio.h
 	$(CC) $(CFLAGS) imgmanip/imgio/imgio.cpp
 
-
-# main: main.o imgio.o
-# 	$(CC) main.o imgio.o -o main $(LDFLAGS) $(LDLIBS)
-
-# main.o: main.cpp imgio.pcm
-# 	$(CC) $(CFLAGS) -fmodule-file=imgio.pcm -c main.cpp -o main.o
-
-# # compiling the imgio module
-# imgio.o: imgio.pcm
-# 	$(CC) $(CFLAGS) -c imgio.pcm -o imgio.o
-
-# imgio.pcm: imgmanip/imgio/imgio.cpp
-# 	$(CC) $(CFLAGS) --compile imgmanip/imgio/imgio.cpp -o imgio.pcm
 
 .PHONY: clean
 clean:
