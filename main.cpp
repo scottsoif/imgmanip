@@ -150,7 +150,9 @@ int test_arm() {
 int main(int argc, char const *argv[])
 {
   /* code */
-  test_arm();
+  // test_arm();
   imgio_hello_word();
+  auto img = read_img("test.jpg");
+  write_img(img, "test3.jpeg");
   return 0;
 }

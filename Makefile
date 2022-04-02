@@ -5,7 +5,7 @@ CFLAGS = -g -Wall -std=c++20 -c
 LDFLAGS = -g
 
 # optional library if we want to include
-LDLIBS = -larmadillo
+LDLIBS = -larmadillo -ljpeg
 
 export CPATH=lib/include
 export LIBRARY_PATH=lib/lib
@@ -18,8 +18,10 @@ main.o: main.cpp imgmanip/imgio/imgio.h
 
 # compiling the imgio "module"
 imgio.o: imgmanip/imgio/imgio.cpp imgmanip/imgio/imgio.h
-	$(CC) $(CFLAGS) imgmanip/imgio/imgio.cpp
+	$(CC) $(CFLAGS) imgmanip/imgio/imgio.cpp -I lib/boost_1_77_0
 
+imgio_test: imgmanip/imgio/imgio_test.cpp
+	$(CC) $(CFLAGS) imgmanip/imgio/imgio_test.cpp -I lib/jpeg-9e
 
 .PHONY: clean
 clean:
