@@ -10,18 +10,16 @@ LDLIBS = -larmadillo -ljpeg
 export CPATH=lib/include
 export LIBRARY_PATH=lib/lib
 
-main: main.o imgio.o
-	$(CC) main.o imgio.o -o main $(LDFLAGS) $(LDLIBS)
+main: main.o
+	$(CC) main.o -o main $(LDFLAGS) $(LDLIBS)
 
 main.o: main.cpp imgmanip/imgio/imgio.h
-	$(CC) $(CFLAGS) main.cpp
+	$(CC) $(CFLAGS) main.cpp -I lib/boost_1_77_0
 
 # compiling the imgio "module"
-imgio.o: imgmanip/imgio/imgio.cpp imgmanip/imgio/imgio.h
-	$(CC) $(CFLAGS) imgmanip/imgio/imgio.cpp -I lib/boost_1_77_0
+# imgio.o: imgmanip/imgio/imgio.cpp imgmanip/imgio/imgio.h
+# 	$(CC) $(CFLAGS) imgmanip/imgio/imgio.cpp
 
-imgio_test: imgmanip/imgio/imgio_test.cpp
-	$(CC) $(CFLAGS) imgmanip/imgio/imgio_test.cpp -I lib/jpeg-9e
 
 .PHONY: clean
 clean:
