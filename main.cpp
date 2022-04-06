@@ -152,10 +152,7 @@ int main(int argc, char const *argv[])
   /* code */
   // test_arm();
   imgio_hello_word();
-  // Cube<int> img = read_img<int>("test.jpg");
-  // Cube<int> img = read_img<int>("testpng.png");
   Cube<int> pngimg = read_img<int>("testpng.png");
   write_img(pngimg, "test10.jpeg");
-  // auto anotherimg = <int>("test3.png");
   return 0;
 }
