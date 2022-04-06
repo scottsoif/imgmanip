@@ -1,15 +1,20 @@
 #include <armadillo>
 #include <iostream>
+#include <variant>
 #include <boost/gil.hpp>
 #include <boost/gil/io/io.hpp>
 #include <boost/gil/extension/io/jpeg.hpp>
+#include <boost/gil/extension/io/png.hpp>
 
 using namespace std;
 using namespace arma;
 
 void imgio_hello_word();
-Cube<uint8_t> read_img(string);
-void write_img(Cube<uint8_t>&, string);
+template <typename pixel_type>
+Cube<pixel_type> read_img(string);
+
+template <typename pixel_type>
+void write_img(Cube<pixel_type>&, string);
 
 
 /*
@@ -77,14 +82,27 @@ struct PixelReader{
   }
 };
 
+string get_file_extension(string filename) {
+  return filename.substr(filename.find_last_of(".") + 1);
+}
+
 template <typename pixel_type>
 Cube<pixel_type> read_img(string filename) {
   using namespace boost::gil;
   rgb8_image_t img;
-  image_read_settings<jpeg_tag> read_settings;
-  read_image(filename, img, read_settings);
+
+  string file_ext = get_file_extension(filename);
+
+  if (file_ext == "jpeg" || file_ext == "jpg")
+    read_and_convert_image(filename, img, jpeg_tag{});
+  else if (file_ext == "png")
+    read_and_convert_image(filename, img, png_tag{});
+  else
+    throw "input image format is not supported!";
+
   Cube<pixel_type> storage(img.height(), img.width(), num_channels<rgb8_image_t>());
   for_each_pixel(const_view(img), PixelReader(&storage));
+
   return storage;
 }
 
@@ -92,6 +110,14 @@ template <typename pixel_type>
 void write_img(Cube<pixel_type> &storage, string save_path) {
   using namespace boost::gil;
   rgb8_image_t writeimg(storage.n_cols, storage.n_rows);
+
+  string save_ext = get_file_extension(save_path);
   generate_pixels(view(writeimg), PixelGenerator(&storage));
-  write_view(save_path, view(writeimg), jpeg_tag{});
+
+  if (save_ext == "jpeg" || save_ext == "jpg")
+    write_view(save_path, view(writeimg), jpeg_tag{});
+  else if (save_ext == "png")
+    write_view(save_path, view(writeimg), png_tag{});
+  else
+    throw "saving image format is not supported!";
 }

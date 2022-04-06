@@ -5,7 +5,7 @@ CFLAGS = -g -Wall -std=c++20 -c
 LDFLAGS = -g
 
 # optional library if we want to include
-LDLIBS = -larmadillo -ljpeg
+LDLIBS = -larmadillo -ljpeg -lpng
 
 export CPATH=lib/include
 export LIBRARY_PATH=lib/lib
