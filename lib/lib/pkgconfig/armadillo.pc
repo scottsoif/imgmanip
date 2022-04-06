@@ -1,9 +1,0 @@
-libdir=/Users/bobby/Documents/2022_Spring/C++/imgmanip-/lib/lib
-includedir=/Users/bobby/Documents/2022_Spring/C++/imgmanip-/lib/include
-
-Name: armadillo
-Description: Fast C++ matrix library with syntax similar to MATLAB and Octave
-URL: http://arma.sourceforge.net
-Version: 10.9.93
-Cflags: -I${includedir}
-Libs: -L${libdir} -larmadillo

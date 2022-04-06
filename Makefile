@@ -1,6 +1,6 @@
 # change the default compiler with the one
 # that supports C++20 modules feature
-CC=g++-11
+CC='g++-11'
 CFLAGS = -g -Wall -std=c++20 -c
 LDFLAGS = -g
 
