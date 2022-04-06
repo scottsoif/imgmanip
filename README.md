@@ -8,7 +8,7 @@ Design Using C++ Final Project
 
 Install future dependencies into the `lib` folder. Currently, there is only `armidillo` for linear algebra.
 
-You will need to run `./install.sh` to finish setting up these dependencies.
+You will need to run `./install.sh` to finish setting up these dependencies. ENSURE YOU HAVE NO WHITESPACE IN YOUR DIRECTORY PATH.
 
 ### Makefile
 
