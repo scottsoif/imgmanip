@@ -1,3 +1,6 @@
+#ifndef IMGIO_H_
+#define IMGIO_H_
+
 #include <armadillo>
 #include <iostream>
 #include <variant>
@@ -121,3 +124,5 @@ void write_img(Cube<pixel_type> &storage, string save_path) {
   else
     throw "saving image format is not supported!";
 }
+
+#endif
