@@ -13,7 +13,7 @@ export LIBRARY_PATH=lib/lib
 main: main.o
 	$(CC) main.o -o main $(LDFLAGS) $(LDLIBS)
 
-main.o: main.cpp imgmanip/imgio/imgio.h
+main.o: main.cpp imgmanip/imgio/imgio.h imgmanip/homography.h
 	$(CC) $(CFLAGS) main.cpp -I lib/boost_1_77_0
 
 # compiling the imgio "module"
