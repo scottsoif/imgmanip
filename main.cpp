@@ -156,10 +156,16 @@ int test_arm() {
 void testHomography(Cube<int> srcImg){
 
   // random test H_matrix
-  mat H_3x3 = { { -0.0043,  0.0004, -0.4261 },
-            {  0.0020, -0.0054, -0.9046 },
-            {  0.0000,  0.0000, -0.0091 } };
-
+  // mat H_3x3 = { { -0.0043,  0.0004, -0.4261 },
+  //           {  0.0020, -0.0054, -0.9046 },
+  //           {  0.0000,  0.0000, -0.0091 } };
+  double right_idx = (double)(srcImg.n_cols-1);
+  double bottom_idx = (double)(srcImg.n_rows-1);
+  mat startPoints =  { { 0,  0}, // top-left
+                        { bottom_idx,  right_idx } }; // bottom-right
+  mat destination = {{5,5}, 
+  { bottom_idx,  right_idx }};
+  mat H_3x3 = computeHomography(startPoints, destination);
   Cube<int> newImg = genHomographyImgCanvas<int>(srcImg, H_3x3);
   write_img(newImg, "testHomog.jpeg");
 
@@ -172,7 +178,10 @@ int main(int argc, char const *argv[])
   // test_arm();
   imgio_hello_word();
   Cube<int> img = read_img<int>("test.jpg");
-  //cout << img.at(0,0) <<endl;
+
+
+  
+  //cout << img(0,0,0) <<endl;
   testHomography(img);
   write_img(img, "test3.jpeg");
   return 0;
