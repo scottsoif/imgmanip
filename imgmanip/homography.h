@@ -14,6 +14,37 @@ int tempMax(int num1, int num2){
   return (num1 > num2) ? num1 : num2;
 }
 
+
+
+template <typename rowColType>
+ mat computeHomography (Mat<rowColType> srcPts, Mat<rowColType> destPts){
+   int n_row = srcPts.n_rows;
+   int n_col = 9;
+   Mat<rowColType> newSrcPts(n_row, n_col, fill::zeros);
+   for (int i = 0; i< n_row; i++){
+     rowColType x_s = srcPts.at(i,1);
+     rowColType y_s = srcPts.at(i,2);
+     rowColType x_d = destPts.at(i,1);
+     rowColType y_d = destPts.at(i,2);
+     Mat<rowColType> temp = {{x_s,y_s,1,0,0,0, -x_d*x_s, -x_d*y_s, -x_d},
+                              {0,0,0,x_s,y_s, 1, -y_d*x_s, -y_d*y_s, -y_d}};
+     newSrcPts.rows(2*i-1, 2*1) = temp;
+
+
+   }
+   mat V;
+   mat D;
+   eig_gen(V,D,newSrcPts.t()*newSrcPts);
+   //double minD = min(diagvec(D));
+   int minDIdx = index_min(diagvec(D));
+   mat H_3x3 = V.col(minDIdx);
+   H_3x3.reshape(3,3);
+   return H_3x3.t();
+
+
+
+
+ }
 // template <typename pixel_type>
 // Cube<pixel_type> applyHomography(mat H_3x3, mat srcPts){
 template <typename rowColType>
