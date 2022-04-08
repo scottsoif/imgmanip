@@ -172,6 +172,7 @@ int main(int argc, char const *argv[])
   // test_arm();
   imgio_hello_word();
   Cube<int> img = read_img<int>("test.jpg");
+  //cout << img.at(0,0) <<endl;
   testHomography(img);
   write_img(img, "test3.jpeg");
   return 0;
