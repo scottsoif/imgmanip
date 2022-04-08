@@ -169,10 +169,11 @@ void testHomography(Cube<int> srcImg){
   {0, right_idx},
   { bottom_idx,  right_idx },
   {bottom_idx, 0}};
+
   mat H_3x3 = computeHomography(startPoints, destination);
-  //Cube<int> newImg = genHomographyImgCanvas<int>(srcImg, H_3x3);
+  Cube<int> newImg = genHomographyImgCanvas<int>(srcImg, H_3x3);
   
-  //write_img(newImg, "testHomog.jpeg");
+  write_img(newImg, "testHomog.jpeg");
 
 
 }
