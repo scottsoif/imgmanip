@@ -17,7 +17,7 @@ int tempMax(int num1, int num2){
 
 
 template <typename rowColType>
- mat computeHomography (Mat<rowColType> srcPts, Mat<rowColType> destPts){
+ mat computeHomography (Mat<rowColType>& srcPts, Mat<rowColType>& destPts){
    int n_row = srcPts.n_rows;
    int n_col = 9;
    Mat<rowColType> newSrcPts(n_row, n_col, fill::zeros);
@@ -32,11 +32,14 @@ template <typename rowColType>
 
 
    }
+   
+   vec D;// eigen value diagonal no need to diagnolize
    mat V;
-   mat D;
-   eig_gen(V,D,newSrcPts.t()*newSrcPts);
+   mat A = conv_to<mat>::from(newSrcPts);
+   mat finalA = A.t()*A;
+   eig_gen(D,V,finalA);
    //double minD = min(diagvec(D));
-   int minDIdx = index_min(diagvec(D));
+   int minDIdx = index_min(D);
    mat H_3x3 = V.col(minDIdx);
    H_3x3.reshape(3,3);
    return H_3x3.t();
