@@ -20,7 +20,7 @@ template <typename rowColType>
  mat computeHomography (Mat<rowColType>& srcPts, Mat<rowColType>& destPts){
    int n_row = srcPts.n_rows;
    int n_col = 9;
-   Mat<rowColType> newSrcPts(n_row, n_col, fill::zeros);
+   Mat<rowColType> newSrcPts(2*n_row, n_col, fill::zeros);
    for (int i = 0; i< n_row; i++){
      rowColType x_s = srcPts.at(i,1);
      rowColType y_s = srcPts.at(i,2);
@@ -28,21 +28,23 @@ template <typename rowColType>
      rowColType y_d = destPts.at(i,2);
      Mat<rowColType> temp = {{x_s,y_s,1,0,0,0, -x_d*x_s, -x_d*y_s, -x_d},
                               {0,0,0,x_s,y_s, 1, -y_d*x_s, -y_d*y_s, -y_d}};
-     newSrcPts.rows(2*i-1, 2*1) = temp;
+     newSrcPts.rows(2*i, 2*i+1) = temp;
 
 
    }
-   
+   //cout << newSrcPts << endl;
    vec D;// eigen value diagonal no need to diagnolize
    mat V;
    mat A = conv_to<mat>::from(newSrcPts);
    mat finalA = A.t()*A;
-   eig_gen(D,V,finalA);
+  
+   eig_sym(D,V,finalA);
    //double minD = min(diagvec(D));
    int minDIdx = index_min(D);
    mat H_3x3 = V.col(minDIdx);
    H_3x3.reshape(3,3);
-   return H_3x3.t();
+   cout << H_3x3 << endl;
+  return H_3x3;
 
 
 
