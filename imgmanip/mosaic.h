@@ -74,6 +74,20 @@ Cube<pixel_type> max_crop(Cube<int>& srcImg, double img_out_ratio){
     return ratioCroppedImg;
 }
 
+vector<float> getAvgColor(Cube<int>& img){
+
+    int numElem = (int)img.n_rows*img.n_cols;
+
+    int sumR = accu(img.slice(0));
+    int sumG = accu(img.slice(1));
+    int sumB = accu(img.slice(2));
+
+    float avgR = (float)sumR/numElem;
+    float avgG = (float)sumG/numElem;
+    float avgB = (float)sumB/numElem;
+
+    return {avgR, avgG, avgB};
+} 
 
 
 
