@@ -40,15 +40,24 @@ void testHomography(Cube<int> srcImg){
 void testMosiac(){
 
   Cube<int> srcImg = read_img<int>("imgs/tiles/IMG_9738.png");
+  Cube<int> srcImgBroccoli = read_img<int>("imgs/tiles/broccoli.png");
 
-// demonstrating that the h or w can be greater than img size
+  // demonstrating that the h or w can be greater than img size
   Cube<int> croppedImg = crop<int>(srcImg, 1800, 600, 7000, 400);
   write_img(croppedImg, "imgs/tiles/simple_cropped_IMG_9738.png");
 
-  // Cube<int> ratioCroppedImg = max_crop<int>(srcImg, 50/120.0);
-  // write_img(ratioCroppedImg, "imgs/tiles/ratio_cropped_IMG_9738.png");
+  Cube<int> ratioCroppedImg = max_crop<int>(srcImg, 50/120.0);
+  write_img(ratioCroppedImg, "imgs/tiles/ratio_cropped_IMG_9738.png");
+  
+  cout << "saved imgs to directory imgs/tiles/\n" << endl;
 
-  cout << "saved imgs to directory imgs/tiles/" << endl;
+  vector<float> avgImgRGB = getAvgColor(srcImg);
+
+  cout << "Average Colors \nR:\t" << avgImgRGB[0] << "\nG:\t" << avgImgRGB[1] <<"\nB:\t" << avgImgRGB[2] << endl;
+  avgImgRGB = getAvgColor(srcImgBroccoli);
+  cout << "\nBroccoli Img Average Colors \nR:\t" << avgImgRGB[0] << "\nG:\t" << avgImgRGB[1] <<"\nB:\t" << avgImgRGB[2] << endl;
+
+
 
 
 }
