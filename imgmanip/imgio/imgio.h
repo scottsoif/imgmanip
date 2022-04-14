@@ -4,10 +4,12 @@
 #include <armadillo>
 #include <iostream>
 #include <variant>
-#include <boost/gil.hpp>
-#include <boost/gil/io/io.hpp>
-#include <boost/gil/extension/io/jpeg.hpp>
-#include <boost/gil/extension/io/png.hpp>
+
+#include "pch.hpp"
+// #include <boost/gil.hpp>
+// #include <boost/gil/io/io.hpp>
+// #include <boost/gil/extension/io/jpeg.hpp>
+// #include <boost/gil/extension/io/png.hpp>
 
 using namespace std;
 using namespace arma;
