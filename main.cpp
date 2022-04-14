@@ -53,7 +53,7 @@ void testMosiac(){
   Cube<int> croppedImg = crop<int>(targetImg, 1800, 600, 7000, 400);
   write_img(croppedImg, "imgs/tiles/simple_cropped_IMG_9738.png");
 
-  Cube<int> ratioCroppedImg = max_crop<int>(targetImg, 50/120.0);
+  Cube<int> ratioCroppedImg = maxCrop<int>(targetImg, 50/120.0);
   write_img(ratioCroppedImg, "imgs/tiles/ratio_cropped_IMG_9738.png");
   
   cout << "saved imgs to directory imgs/tiles/\n" << endl;
