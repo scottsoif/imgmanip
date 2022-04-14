@@ -33,7 +33,7 @@ Cube<pixel_type> crop(Cube<pixel_type> &srcImg, int left_top_r, int left_top_c, 
 }
 
 template <typename pixel_type>
-Cube<pixel_type> max_crop(Cube<pixel_type> &srcImg, double img_out_ratio)
+Cube<pixel_type> maxCrop(Cube<pixel_type> &srcImg, double img_out_ratio)
 {
     // function to center crop img to specified aspect ratio
 
@@ -177,7 +177,7 @@ Cube<pixel_type> getBestMatch(Cube<pixel_type> &targetImg, vector<Cube<pixel_typ
  */
 template <typename pixel_type>
 tuple<Cube<pixel_type>, vector<float>>init_tile(Cube<int>&srcImg, double img_out_ratio, int target_h, int target_w){
-    Cube<pixel_type>cropped = max_crop(srcImg, img_out_ratio);
+    Cube<pixel_type>cropped = maxCrop(srcImg, img_out_ratio);
     Cube<pixel_type>resizedImg = resize_image(cropped, target_h, target_w);
     vector<float> avgColor = getAvgColor(resizedImg);
     tuple<Cube<pixel_type>, vector<float>> result = {resizedImg, avgColor};
