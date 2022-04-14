@@ -39,23 +39,57 @@ void testHomography(Cube<int> srcImg){
 
 void testMosiac(){
 
-  Cube<int> srcImg = read_img<int>("imgs/tiles/IMG_9738.png");
+  
   Cube<int> srcImgBroccoli = read_img<int>("imgs/tiles/broccoli.png");
+  Cube<int> srcHp = read_img<int>("imgs/tiles/hp_netflix.png");
+  Cube<int> tgtLettuce = read_img<int>("imgs/tiles/lettuce.png");
+  Cube<int> targetImg = read_img<int>("imgs/tiles/IMG_9738.png");
+
+  vector<Cube<int>> srcImgList;
+  srcImgList.push_back(srcImgBroccoli);
+  srcImgList.push_back(srcHp);
 
   // demonstrating that the h or w can be greater than img size
-  Cube<int> croppedImg = crop<int>(srcImg, 1800, 600, 7000, 400);
+  Cube<int> croppedImg = crop<int>(targetImg, 1800, 600, 7000, 400);
   write_img(croppedImg, "imgs/tiles/simple_cropped_IMG_9738.png");
 
-  Cube<int> ratioCroppedImg = max_crop<int>(srcImg, 50/120.0);
+  Cube<int> ratioCroppedImg = max_crop<int>(targetImg, 50/120.0);
   write_img(ratioCroppedImg, "imgs/tiles/ratio_cropped_IMG_9738.png");
   
   cout << "saved imgs to directory imgs/tiles/\n" << endl;
 
-  vector<float> avgImgRGB = getAvgColor(srcImg);
+  vector<float> avgImgRGB = getAvgColor<int>(targetImg);
 
   cout << "Average Colors \nR:\t" << avgImgRGB[0] << "\nG:\t" << avgImgRGB[1] <<"\nB:\t" << avgImgRGB[2] << endl;
   avgImgRGB = getAvgColor(srcImgBroccoli);
   cout << "\nBroccoli Img Average Colors \nR:\t" << avgImgRGB[0] << "\nG:\t" << avgImgRGB[1] <<"\nB:\t" << avgImgRGB[2] << endl;
+  
+ //Since we do not need to resize img up so I delete that test
+  Cube<int> resizedImgDown = resize_image<int>(targetImg, 50, 50); 
+  write_img(resizedImgDown, "imgs/tiles/resized_down_IMG_9738.png");
+  
+
+
+
+  //should be the hp one 
+  Cube<int> bestMatchImg = getBestMatch<int>(targetImg, srcImgList);
+  write_img (bestMatchImg,"imgs/tiles/bestMatchTargetNight.png");
+  //should be the lettuce
+  Cube<int> bestMatchImg2 = getBestMatch<int>(tgtLettuce, srcImgList);
+  write_img (bestMatchImg2,"imgs/tiles/bestMatchTargetLettuce.png");
+
+  tuple<Cube<int>, vector<float>> tileAndAvgColor = init_tile<int>(srcHp, 0.8, 1000, 800);
+  Cube<int> tileHp = std::get<0>(tileAndAvgColor);
+  vector<float> avgHp = std::get<1>(tileAndAvgColor);
+  write_img (tileHp,"imgs/tiles/tileHp.png");
+  cout << "tile Hp avg Color is \nR:\t" << avgHp[0]  << "\nG:\t " << avgHp[1] << "\nB:\t" << avgHp[2] << endl;
+
+
+
+
+
+  
+
 
 
 
