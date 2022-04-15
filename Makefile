@@ -14,8 +14,8 @@ export LIBRARY_PATH=lib/lib
 main: main.o
 	$(CC) main.o -o main $(LDFLAGS) $(LDLIBS)
 
-main.o: main.cpp stable imgmanip/imgio/imgio.h imgmanip/homography.h imgmanip/mosaic.h 
-	$(CC) $(CFLAGS) main.cpp -include imgmanip/imgio/pch.hpp
+main.o: main.cpp stable imgmanip/imgio/imgio.h imgmanip/homography.h imgmanip/mosaic.h
+	$(CC) $(CFLAGS) main.cpp -include imgmanip/imgio/pch.hpp -I lib/boost_1_77_0
 #	$(CC) $(CFLAGS) -x c++-header imgmanip/imgio/pch.h -I lib/boost_1_77_0
 
 stable: imgmanip/imgio/pch.hpp
