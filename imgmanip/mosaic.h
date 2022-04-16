@@ -149,8 +149,8 @@ Cube<pixel_type> getBestMatch(Cube<pixel_type> &targetImg, vector<Cube<pixel_typ
         vector<float> srcAvgColor = getAvgColor(srcImg_List[i]);
 
         double ed = 0;
-        for (int i =0; i < (int)(targetAvgColor.size()); i++){
-            ed += pow((targetAvgColor.at(i) - srcAvgColor.at(i)),2);
+        for (int j =0; j < (int)(targetAvgColor.size()); j++){
+            ed += pow((targetAvgColor.at(j) - srcAvgColor.at(j)),2);
         }
         ed = sqrt(ed);
         if (ed < smallest_ed){
