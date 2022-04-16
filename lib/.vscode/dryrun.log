@@ -1,9 +1,0 @@
-make -f /Users/bobby/Documents/2022_Spring/C++/imgmanip-/lib/Makefile --dry-run --always-make --keep-going --print-directory
-make: Entering directory `/Users/bobby/Documents/2022_Spring/C++/imgmanip-/lib'
-make: Leaving directory `/Users/bobby/Documents/2022_Spring/C++/imgmanip-/lib'
- 
-make: /Users/bobby/Documents/2022_Spring/C++/imgmanip-/lib/Makefile: No such file or directory
-make: *** No rule to make target `/Users/bobby/Documents/2022_Spring/C++/imgmanip-/lib/Makefile'.
-make: Failed to remake makefile `/Users/bobby/Documents/2022_Spring/C++/imgmanip-/lib/Makefile'.
-make: *** No targets specified and no makefile found.  Stop.
-
