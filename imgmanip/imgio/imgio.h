@@ -91,6 +91,12 @@ string get_file_extension(string filename) {
   return filename.substr(filename.find_last_of(".") + 1);
 }
 
+bool is_file_img(string filename) {
+  string ext = get_file_extension(filename);
+  return ext == "jpeg" || ext == "jpg" || ext == "png";
+}
+
+
 template <typename pixel_type>
 Cube<pixel_type> read_img(string filename) {
   using namespace boost::gil;

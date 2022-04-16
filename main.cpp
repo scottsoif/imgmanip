@@ -24,14 +24,14 @@ void testHomography(Cube<int> srcImg){
                        {0, right_idx}, //top- right
                        { bottom_idx, right_idx }, //bottom-right
                        {bottom_idx, 0}}; // bottom-left
-  mat destination = {{0,50}, 
+  mat destination = {{0,50},
   {50, right_idx+0},
   { bottom_idx+0,  right_idx-50 },
   {bottom_idx-50, 0+0}};
 
   mat H_3x3 = computeHomography(startPoints, destination);
   Cube<int> newImg = genHomographyImgCanvas<int>(srcImg, H_3x3);
-  
+
   write_img(newImg, "testHomog.jpeg");
 
 
@@ -39,7 +39,7 @@ void testHomography(Cube<int> srcImg){
 
 void testMosiac(){
 
-  
+
   Cube<int> srcImgBroccoli = read_img<int>("imgs/tiles/broccoli.png");
   Cube<int> srcHp = read_img<int>("imgs/tiles/hp_netflix.png");
   Cube<int> tgtLettuce = read_img<int>("imgs/tiles/lettuce.png");
@@ -55,7 +55,7 @@ void testMosiac(){
 
   Cube<int> ratioCroppedImg = maxCrop<int>(targetImg, 50/120.0);
   write_img(ratioCroppedImg, "imgs/tiles/ratio_cropped_IMG_9738.png");
-  
+
   cout << "saved imgs to directory imgs/tiles/\n" << endl;
 
   vector<float> avgImgRGB = getAvgColor<int>(targetImg);
@@ -63,15 +63,15 @@ void testMosiac(){
   cout << "Average Colors \nR:\t" << avgImgRGB[0] << "\nG:\t" << avgImgRGB[1] <<"\nB:\t" << avgImgRGB[2] << endl;
   avgImgRGB = getAvgColor(srcImgBroccoli);
   cout << "\nBroccoli Img Average Colors \nR:\t" << avgImgRGB[0] << "\nG:\t" << avgImgRGB[1] <<"\nB:\t" << avgImgRGB[2] << endl;
-  
+
  //Since we do not need to resize img up so I delete that test
-  Cube<int> resizedImgDown = resize_image<int>(targetImg, 50, 50); 
+  Cube<int> resizedImgDown = resize_image<int>(targetImg, 50, 50);
   write_img(resizedImgDown, "imgs/tiles/resized_down_IMG_9738.png");
-  
 
 
 
-  //should be the hp one 
+
+  //should be the hp one
   Cube<int> bestMatchImg = getBestMatch<int>(targetImg, srcImgList);
   write_img (bestMatchImg,"imgs/tiles/bestMatchTargetNight.png");
   //should be the lettuce
@@ -88,12 +88,28 @@ void testMosiac(){
 
 
 
-  
 
 
 
 
 
+
+}
+
+
+void test_create_mosaic() {
+  string tgt_img_path = "imgs/tgt_imgs/goat.jpg";
+  string src_img_dir = "imgs/src_imgs";
+
+  int tile_cnt_h = 3, tile_cnt_w = 3;
+
+  cout << "Enter the number of tiles you want in column: ";
+  cin >> tile_cnt_h;
+  cout << "Enter the number of tiles you want in row: ";
+  cin >> tile_cnt_w;
+
+  Cube<int> mosaic_img = create_mosaic<int>(tgt_img_path, src_img_dir, tile_cnt_h, tile_cnt_w);
+  write_img(mosaic_img, "imgs/mosaic_imgs/mosaic.jpg");
 }
 
 
@@ -101,11 +117,13 @@ int main(int argc, char const *argv[])
 {
   /* code */
   // imgio_hello_word();
-  Cube<int> img = read_img<int>("test.jpg");
-  testHomography(img);
+  // Cube<int> img = read_img<int>("test.jpg");
+  // testHomography(img);
 
-  testMosiac();
+  // testMosiac();
+  test_create_mosaic();
 
-  write_img(img, "test3.jpeg");
+  // write_img(img, "test3.jpeg");
   return 0;
 }
+
