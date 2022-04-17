@@ -261,6 +261,7 @@ Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile
     int tgt_h = tile_h * tile_cnt_h;
     int tgt_w = tile_w * tile_cnt_w;
     double tgt_wh_ratio = tgt_w / (double)tgt_h;
+    double tile_wh_ratio = tile_w / (double)tile_h;
 
 
     cout << "orig tgt h, orig tgt w, tgt h, tgt w, tile h, tile w, tgt_wh_ratio" << endl <<
@@ -289,7 +290,7 @@ Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile
         coutImgAttr(orig_src_img);
 
 
-        auto crop_src_img = maxCrop(orig_src_img, tile_w / tile_h);
+        auto crop_src_img = maxCrop(orig_src_img, tile_wh_ratio);
         cout << "crop_src_img" << endl;
         coutImgAttr(crop_src_img);
 
