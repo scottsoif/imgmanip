@@ -28,3 +28,7 @@ Target image:
 Mosaic image:
 ![Alt text](imgs/mosaic_imgs/mosaic.jpg)
 
+## Future directions
+1. Match based on other image features such as those generated via conv nets. This can work towards reducing the number of images needed to construct an accurate images
+2. choosing set of regions vs
+

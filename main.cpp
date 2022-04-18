@@ -98,7 +98,7 @@ void testMosiac(){
 
 
 void test_create_mosaic() {
-  string tgt_img_path = "imgs/tgt_imgs/goat.jpg";
+  string tgt_img_path = "imgs/tgt_imgs/joy2.jpeg";
   string src_img_dir = "imgs/src_imgs";
 
   int tile_cnt_h = 3, tile_cnt_w = 3;
@@ -109,7 +109,7 @@ void test_create_mosaic() {
   cin >> tile_cnt_w;
 
   Cube<int> mosaic_img = create_mosaic<int>(tgt_img_path, src_img_dir, tile_cnt_h, tile_cnt_w);
-  write_img(mosaic_img, "imgs/mosaic_imgs/mosaic.jpg");
+  write_img(mosaic_img, "imgs/mosaic_imgs/joy2.jpg");
 }
 
 
