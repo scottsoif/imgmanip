@@ -14,13 +14,13 @@ namespace fs = std::filesystem;
 
 typedef std::chrono::duration<double, std::milli> millisec_type;
 
-template<typename pixel_type>
+template<NumericType pixel_type>
 void coutImgAttr(Cube<pixel_type> &img){
     cout << "height: " << img.n_rows << endl;
     cout << "width: " << img.n_cols << endl;
 }
 
-template <typename pixel_type>
+template <NumericType pixel_type>
 Cube<pixel_type> crop(Cube<pixel_type> &srcImg, int left_top_r, int left_top_c, int w, int h)
 {
 
@@ -41,7 +41,7 @@ Cube<pixel_type> crop(Cube<pixel_type> &srcImg, int left_top_r, int left_top_c, 
     return croppedImg;
 }
 
-template <typename pixel_type>
+template <NumericType pixel_type>
 Cube<pixel_type> maxCrop(Cube<pixel_type> &srcImg, double img_out_ratio)
 {
     // function to center crop img to specified aspect ratio
@@ -81,7 +81,7 @@ Cube<pixel_type> maxCrop(Cube<pixel_type> &srcImg, double img_out_ratio)
 
     return ratioCroppedImg;
 }
-template<typename pixel_type>
+template<NumericType pixel_type>
 vector<float> getAvgColor(Cube<pixel_type> &img)
 {
 
@@ -107,7 +107,7 @@ vector<float> getAvgColor(Cube<pixel_type> &img)
  * @param target_w  The width of the target resized img
  * @return Cube<pixel_type>
  */
-template <typename pixel_type>
+template <NumericType pixel_type>
 Cube<pixel_type> resize_image(Cube<pixel_type> &srcImg, int target_h, int target_w)
 {
     int srcN_h = srcImg.n_rows;
@@ -146,7 +146,7 @@ Cube<pixel_type> resize_image(Cube<pixel_type> &srcImg, int target_h, int target
  * @param srcImg_List the list of sourced images
  * @return Cube<pixel_type>  the img that we has the best match with the target img
  */
-template <typename pixel_type>
+template <NumericType pixel_type>
 Cube<pixel_type> getBestMatch(Cube<pixel_type> &targetImg, vector<Cube<pixel_type>> &srcImg_List){
 
 
@@ -173,7 +173,7 @@ Cube<pixel_type> getBestMatch(Cube<pixel_type> &targetImg, vector<Cube<pixel_typ
 
 }
 
-template <typename pixel_type>
+template <NumericType pixel_type>
 int getBestMatchIdx(vector<float> targetAvgColor, vector<vector<float>> &srcAvgColors){
 
     int argmax = 0;
@@ -207,7 +207,7 @@ int getBestMatchIdx(vector<float> targetAvgColor, vector<vector<float>> &srcAvgC
  * @param target_h  The height of the target img
  * @param target_w  The width of the target img
  */
-template <typename pixel_type>
+template <NumericType pixel_type>
 tuple<Cube<pixel_type>, vector<float>>init_tile(Cube<int>&srcImg, double img_out_ratio, int target_h, int target_w){
     Cube<pixel_type>cropped = maxCrop(srcImg, img_out_ratio);
     Cube<pixel_type>resizedImg = resize_image(cropped, target_h, target_w);
@@ -228,12 +228,12 @@ tuple<Cube<pixel_type>, vector<float>>init_tile(Cube<int>&srcImg, double img_out
  * @param left_top_r the starting pixel coordinate r on canvas
  * @param left_top_c the starting pixel coordinate c on canvas
  */
-template<typename pixel_type>
+template<NumericType pixel_type>
 void fill_image(Cube<pixel_type> &canvas, Cube<pixel_type> &tile, int left_top_r, int left_top_c){
     canvas(span(left_top_r, left_top_r + tile.n_rows - 1), span(left_top_c, left_top_c + tile.n_cols - 1), span::all) = tile;
 }
 
-template<typename pixel_type>
+template<NumericType pixel_type>
 bool isTileDense(Cube<pixel_type> &srcImg, int tile_h, int tile_w) {
     return (int)srcImg.n_rows >= tile_h && (int)srcImg.n_cols >= tile_w;
 }
@@ -248,7 +248,7 @@ bool isTileDense(Cube<pixel_type> &srcImg, int tile_h, int tile_w) {
  * @param tile_cnt_h the number of tiles in a column of the resulting image
  * @param tile_cnt_w the number of tiles in a row of the resulting image
  */
-template<typename pixel_type>
+template<NumericType pixel_type>
 Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile_cnt_h, int tile_cnt_w){
 
     Cube<pixel_type>tgt_img = read_img<pixel_type>(tgt_img_path);
@@ -316,18 +316,11 @@ Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile
 
     while (right_bot_r <= tgt_h && right_bot_c <= tgt_w) {
 
-        cout << "============================tile loop============================" << endl;
 
-        cout << "target img attribute: ";
         coutImgAttr(tgt_img);
-        cout << "left_top_r, left_top_c, right_bot_r, right_bot_c "
-        << left_top_r << ", " << left_top_c << ", "
-        << right_bot_r << ", " << right_bot_c << endl;
 
         Cube<pixel_type>tgt_tile = crop(tgt_img, left_top_r, left_top_c, tile_w, tile_h);
-        cout << "cropped" << endl;
         Cube<pixel_type>canvas_tile = getBestMatch(tgt_tile, src_imgs);
-        cout << "gotbestmatch" << endl;
 
         // for debugging purpose
         // string tgt_tile_fname = "imgs/test_tiles/tgt_tile_" + to_string(tile_cnt) + ".jpg";
