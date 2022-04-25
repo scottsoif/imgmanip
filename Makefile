@@ -5,7 +5,10 @@ CFLAGS = -g -Wall -c -std=c++20 -fmodules-ts
 LDFLAGS = -g
 
 # optional library if we want to include
-LDLIBS =
+LDLIBS = -larmadillo -ljpeg -lpng
+
+export CPATH=lib/include
+export LIBRARY_PATH=lib/lib
 
 main: main.o imgio.o
 	$(CC) $(LDFLAGS) main.o imgio.o -o main
