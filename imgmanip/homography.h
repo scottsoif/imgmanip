@@ -43,14 +43,14 @@ template <typename rowColType>
   mat H_3x3 = V.col(minDIdx);
   H_3x3.reshape(3,3);
   H_3x3 = H_3x3.t();
-  
+
   return H_3x3;
 
 
 
 
  }
-// template <typename pixel_type>
+// template <NumericType pixel_type>
 // Cube<pixel_type> applyHomography(mat H_3x3, mat srcPts){
 template <typename rowColType>
 Mat<int> applyHomography(mat H_3x3, Mat<rowColType> srcPtsSqueezed){
@@ -88,7 +88,7 @@ vector<int> getNewCanvasDims(Cube<int>& srcImg, mat& H_3x3){
 
 }
 
-template <typename pixel_type>
+template <NumericType pixel_type>
 Cube<pixel_type> genHomographyImgCanvas(Cube<int>& srcImg, mat& H_3x3){
 
   vector<int> canvasDims =  getNewCanvasDims(srcImg, H_3x3);
@@ -101,7 +101,7 @@ Cube<pixel_type> genHomographyImgCanvas(Cube<int>& srcImg, mat& H_3x3){
   int srcN_rows = (int)(srcImg.n_rows-1);
   Mat<int> srcPt = {{0,0}};
   Mat<int> destPt = {{0,0}};
-  // int = 
+  // int =
   for(int i=0; i<canvasDims[0]; i++){
     for(int j=0; j<canvasDims[1]; j++){
       srcPt =  { { i,  j } };
@@ -112,7 +112,7 @@ Cube<pixel_type> genHomographyImgCanvas(Cube<int>& srcImg, mat& H_3x3){
           newImg(i, j , 1) = srcImg(destPt[0], destPt[1], 1);
           newImg(i, j , 2) = srcImg(destPt[0], destPt[1], 2);
           // cout << "yay" << endl;
-      } 
+      }
       // cout << "img test2 \n" << +srcImg(span(0,0), span(0,0), span::all) << endl;
 
     }

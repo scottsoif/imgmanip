@@ -3,7 +3,7 @@
 
 #include <armadillo>
 #include <iostream>
-#include <variant>
+#include <type_traits>
 
 #include "pch.hpp"
 // #include <boost/gil.hpp>
@@ -14,24 +14,27 @@
 using namespace std;
 using namespace arma;
 
-void imgio_hello_word();
-template <typename pixel_type>
+template<typename T>
+concept NumericType = requires(T param)
+{
+    requires is_integral_v<T> || is_floating_point_v<T>;
+    requires !is_same_v<bool, T>;
+    requires is_arithmetic_v<decltype(param +1)>;
+    requires !is_pointer_v<T>;
+};
+
+template <NumericType pixel_type>
 Cube<pixel_type> read_img(string);
 
-template <typename pixel_type>
+template <NumericType pixel_type>
 void write_img(Cube<pixel_type>&, string);
-
 
 /*
 for more gil documentation, see
 "https://www.boost.org/doc/libs/1_77_0/libs/gil/doc/html/design/image_view.html"
  */
 
-void imgio_hello_word() {
-  cout << "hello world" << endl;
-}
-
-template <typename pixel_type>
+template <NumericType pixel_type>
 struct PixelGenerator{
 
   Cube<pixel_type>* storage;
@@ -62,7 +65,7 @@ struct PixelGenerator{
     }
 };
 
-template <typename pixel_type>
+template <NumericType pixel_type>
 struct PixelReader{
   Cube<pixel_type>* storage;
   int next_i = 0, next_j = 0;
@@ -97,7 +100,7 @@ bool is_file_img(string filename) {
 }
 
 
-template <typename pixel_type>
+template <NumericType pixel_type>
 Cube<pixel_type> read_img(string filename) {
   using namespace boost::gil;
   rgb8_image_t img;
@@ -117,7 +120,7 @@ Cube<pixel_type> read_img(string filename) {
   return storage;
 }
 
-template <typename pixel_type>
+template <NumericType pixel_type>
 void write_img(Cube<pixel_type> &storage, string save_path) {
   using namespace boost::gil;
   rgb8_image_t writeimg(storage.n_cols, storage.n_rows);
