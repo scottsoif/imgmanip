@@ -3,6 +3,8 @@
 // #include <algorithm>
 #include <armadillo>
 #include <vector>
+#include <functional>
+#include <future>
 #include "imgio/imgio.h"
 #include <chrono>
 #include <string>
@@ -218,6 +220,18 @@ tuple<Cube<pixel_type>, vector<float>>init_tile(Cube<int>&srcImg, double img_out
 
 }
 
+
+template<typename T>
+function<T (T)> makePipeline(const std::vector<std::function<T (T)>>& funcs) {
+    return [&funcs] (const T& arg) {
+        T v = arg; // initial value
+        for (const auto &f: funcs) {
+            v = f(v); // sequentially apply a function.
+        }
+        return v;
+    };
+}
+
 /**
  * @brief fill the canvas in the region starting from (left_top_r, left_top_c) with the pixels
  *         from tiles
@@ -237,6 +251,9 @@ template<NumericType pixel_type>
 bool isTileDense(Cube<pixel_type> &srcImg, int tile_h, int tile_w) {
     return (int)srcImg.n_rows >= tile_h && (int)srcImg.n_cols >= tile_w;
 }
+
+class PreprocessingException: public exception
+{} preprocessingException;
 
 /**
  * @brief create a mosaic version of the image on tgt_img_path from a list of images in the
@@ -272,37 +289,58 @@ Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile
 
     tgt_img = maxCrop(tgt_img, tgt_wh_ratio);
 
+    auto preprocessed = [&](string img_path) {
+        if (!is_file_img(img_path)) {
+            cerr << "file is not an image: " << img_path << endl;
+            throw preprocessingException;
+        }
+        Cube<pixel_type> orig_src_img;
+
+        try {
+           orig_src_img = read_img<pixel_type>(img_path);
+        } catch (ios_base::failure const&) {
+            cerr << "image is not loaded: " << img_path << endl;
+            throw preprocessingException;
+        }
+
+        auto bindedMaxCrop = bind(maxCrop<pixel_type>, placeholders::_1, tile_wh_ratio);
+        auto crop_src_img = bindedMaxCrop(orig_src_img);
+
+        auto bindedIsTileDense = bind(isTileDense<pixel_type>, placeholders::_1, tile_h, tile_w);
+        if (!bindedIsTileDense(crop_src_img)) {
+            cerr << "image does not have enough pixels: " << img_path << endl;
+            throw preprocessingException;
+        }
+
+        auto bindedResize = bind(resize_image<pixel_type>, placeholders::_1, tile_h, tile_w);
+        auto rsz_src_img = bindedResize(crop_src_img);
+        cout << "rsz_src_img" << endl;
+        coutImgAttr(rsz_src_img);
+
+        return rsz_src_img;
+    };
+
+    vector<future<Cube<pixel_type>>> handles;
+    int src_img_cnt = 0;
     for (const auto & entry : fs::directory_iterator(src_img_dir)) {
         cout << entry.path() << endl;
         cout << get_file_extension(entry.path()) << endl;
         cout << is_file_img(entry.path()) << endl;
 
-        if (!is_file_img(entry.path())) continue;
-        Cube<pixel_type> orig_src_img;
+        handles.push_back(async(preprocessed, entry.path()));
 
-        try {
-           orig_src_img = read_img<pixel_type>(entry.path());
-        } catch (ios_base::failure const&) {
-            cerr << "image is not loaded: " << entry.path() << endl;
-            continue;
-        }
-        cout << "orig_src_img" << endl;
-        coutImgAttr(orig_src_img);
-
-
-        auto crop_src_img = maxCrop(orig_src_img, tile_wh_ratio);
-        cout << "crop_src_img" << endl;
-        coutImgAttr(crop_src_img);
-
-        if (!isTileDense(crop_src_img, tile_h, tile_w)) continue;
-
-        auto rsz_src_img = resize_image(crop_src_img, tile_h, tile_w);
-        cout << "rsz_src_img" << endl;
-        coutImgAttr(rsz_src_img);
-
-        src_imgs.push_back(rsz_src_img);
-        if (static_cast<int>(src_imgs.size()) == mosaic_cnt) break;
+        if (++src_img_cnt == mosaic_cnt) break;
     }
+
+    for (auto& handle : handles) {
+        try {
+            Cube<pixel_type> img = handle.get();
+            src_imgs.push_back(img);
+        } catch (PreprocessingException &e) {
+            cerr << "preprocess failed " << "\n";
+        }
+    }
+
     cout << "finish loading src img list" << endl;
 
     Cube<pixel_type> canvas_img(tgt_h, tgt_w, tgt_img.n_slices);
@@ -322,13 +360,6 @@ Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile
         Cube<pixel_type>tgt_tile = crop(tgt_img, left_top_r, left_top_c, tile_w, tile_h);
         Cube<pixel_type>canvas_tile = getBestMatch(tgt_tile, src_imgs);
 
-        // for debugging purpose
-        // string tgt_tile_fname = "imgs/test_tiles/tgt_tile_" + to_string(tile_cnt) + ".jpg";
-        // string src_tile_fname = "imgs/test_tiles/src_tile_" + to_string(tile_cnt++) + ".jpg";
-        // write_img(tgt_tile, tgt_tile_fname);
-        // write_img(canvas_tile, src_tile_fname);
-
-        cout << "tgt_tile and canvas_tile created" << endl;
 
         fill_image(canvas_img, canvas_tile, left_top_r, left_top_c);
 

@@ -3,6 +3,7 @@
 
 #include <armadillo>
 #include <iostream>
+#include <functional>
 #include <type_traits>
 
 #include "pch.hpp"
@@ -134,6 +135,21 @@ void write_img(Cube<pixel_type> &storage, string save_path) {
     write_view(save_path, view(writeimg), png_tag{});
   else
     throw "saving image format is not supported!";
+}
+
+template <NumericType pixel_type>
+vector<Cube<pixel_type>> read_many_imgs(vector<string>& filenames, function<Cube<pixel_type>(Cube<pixel_type>)> pipeline) {
+  vector<Cube<pixel_type>> imgs;
+  for (string &file : filenames) {
+    try {
+      Cube<pixel_type> orig_img = read_img<pixel_type>(file);
+      imgs.push_back(pipeline(orig_img));
+    } catch (ios_base::failure const&) {
+      cerr << "image is not loaded: " << file << endl;
+      continue;
+    }
+  }
+  return imgs;
 }
 
 #endif
