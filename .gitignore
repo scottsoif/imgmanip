@@ -1,3 +1,4 @@
 .DS_Store
 .vscode/
 lib/boost_1_77_0/
+lib/.DS_Store
