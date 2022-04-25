@@ -1,10 +1,11 @@
 #include <iostream>
 // #include <algorithm>
-#include <armadillo>
+// #include <armadillo>
 #include <vector>
 #include "./imgmanip/imgio/imgio.h"
 #include "./imgmanip/homography.h"
 #include "./imgmanip/mosaic.h"
+// #include "./imgmanip/imgio/pch.h"
 
 
 using namespace std;
@@ -66,7 +67,7 @@ void testMosiac(){
 
  //Since we do not need to resize img up so I delete that test
   Cube<int> resizedImgDown = resize_image<int>(targetImg, 50, 50);
-  write_img(resizedImgDown, "imgs/tiles/resized_down_IMG_9738.png");
+  write_img(resizedImgDown,  "imgs/tiles/resized_down_IMG_9738.png");
 
 
 
@@ -83,13 +84,6 @@ void testMosiac(){
   vector<float> avgHp = std::get<1>(tileAndAvgColor);
   write_img (tileHp,"imgs/tiles/tileHp.png");
   cout << "tile Hp avg Color is \nR:\t" << avgHp[0]  << "\nG:\t " << avgHp[1] << "\nB:\t" << avgHp[2] << endl;
-
-
-
-
-
-
-
 
 
 
@@ -119,7 +113,6 @@ int main(int argc, char const *argv[])
   // imgio_hello_word();
   // Cube<int> img = read_img<int>("test.jpg");
   // testHomography(img);
-
   // testMosiac();
   test_create_mosaic();
 

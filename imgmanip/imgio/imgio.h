@@ -1,11 +1,11 @@
 #ifndef IMGIO_H_
 #define IMGIO_H_
 
-#include <armadillo>
+// #include <armadillo>
 #include <iostream>
 #include <type_traits>
 
-#include "pch.hpp"
+#include "pch.h"
 // #include <boost/gil.hpp>
 // #include <boost/gil/io/io.hpp>
 // #include <boost/gil/extension/io/jpeg.hpp>
