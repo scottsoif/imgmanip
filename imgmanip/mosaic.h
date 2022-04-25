@@ -308,14 +308,12 @@ Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile
 
         auto bindedIsTileDense = bind(isTileDense<pixel_type>, placeholders::_1, tile_h, tile_w);
         if (!bindedIsTileDense(crop_src_img)) {
-            cerr << "image does not have enough pixels: " << img_path << endl;
+            cerr << "image does not have enough pixels: " << img_path << "\n";
             throw preprocessingException;
         }
 
         auto bindedResize = bind(resize_image<pixel_type>, placeholders::_1, tile_h, tile_w);
         auto rsz_src_img = bindedResize(crop_src_img);
-        cout << "rsz_src_img" << endl;
-        coutImgAttr(rsz_src_img);
 
         return rsz_src_img;
     };
@@ -323,12 +321,7 @@ Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile
     vector<future<Cube<pixel_type>>> handles;
     int src_img_cnt = 0;
     for (const auto & entry : fs::directory_iterator(src_img_dir)) {
-        cout << entry.path() << endl;
-        cout << get_file_extension(entry.path()) << endl;
-        cout << is_file_img(entry.path()) << endl;
-
         handles.push_back(async(preprocessed, entry.path()));
-
         if (++src_img_cnt == mosaic_cnt) break;
     }
 
@@ -355,7 +348,6 @@ Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile
     while (right_bot_r <= tgt_h && right_bot_c <= tgt_w) {
 
 
-        coutImgAttr(tgt_img);
 
         Cube<pixel_type>tgt_tile = crop(tgt_img, left_top_r, left_top_c, tile_w, tile_h);
         Cube<pixel_type>canvas_tile = getBestMatch(tgt_tile, src_imgs);
