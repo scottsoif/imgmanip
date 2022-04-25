@@ -1,7 +1,7 @@
-// module;
+#ifndef MOSAIC_H_
+#define MOSAIC_H_
+
 #include <iostream>
-// #include <algorithm>
-// #include <armadillo>
 #include <vector>
 #include <functional>
 #include <future>
@@ -368,3 +368,4 @@ Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile
 }
 
 
+#endif

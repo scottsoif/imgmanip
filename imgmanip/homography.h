@@ -1,4 +1,6 @@
-// module;
+#ifndef HOMOGRAPHY_H_
+#define HOMOGRAPHY_H_
+
 #include <iostream>
 // #include <algorithm>
 // #include <armadillo>
@@ -124,3 +126,4 @@ Cube<pixel_type> genHomographyImgCanvas(Cube<int>& srcImg, mat& H_3x3){
 
 }
 
+#endif

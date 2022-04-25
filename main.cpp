@@ -5,6 +5,7 @@
 #include "./imgmanip/imgio/imgio.h"
 #include "./imgmanip/homography.h"
 #include "./imgmanip/mosaic.h"
+#include "./imgmanip/convolution.h"
 // #include "./imgmanip/imgio/pch.h"
 
 
@@ -71,7 +72,6 @@ void testMosiac(){
 
 
 
-
   //should be the hp one
   Cube<int> bestMatchImg = getBestMatch<int>(targetImg, srcImgList);
   write_img (bestMatchImg,"imgs/tiles/bestMatchTargetNight.png");
@@ -90,7 +90,6 @@ void testMosiac(){
 
 }
 
-
 void test_create_mosaic() {
   string tgt_img_path = "imgs/tgt_imgs/joy2.jpeg";
   string src_img_dir = "imgs/src_imgs";
@@ -106,17 +105,27 @@ void test_create_mosaic() {
   write_img(mosaic_img, "imgs/mosaic_imgs/joy2.jpg");
 }
 
+void test_convolution() {
+  string srcImgPath = "imgs/EC_plaza.png";
+  mat kernel = { { 0, -1, 0 },
+                 { -1, 4, -1 },
+                 { 0, -1, 0 } };
+  kernel /= 9;
+  Cube<int> convolvedImg = convolve2d<int>(srcImgPath, kernel, 2);
+  
+  write_img(convolvedImg, "imgs/convolvedImg.png");
+}
+
+
 
 int main(int argc, char const *argv[])
 {
   /* code */
-  // imgio_hello_word();
-  // Cube<int> img = read_img<int>("test.jpg");
   // testHomography(img);
   // testMosiac();
-  test_create_mosaic();
+  // test_create_mosaic();
+  test_convolution();
 
-  // write_img(img, "test3.jpeg");
   return 0;
 }
 
