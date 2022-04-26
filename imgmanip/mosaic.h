@@ -155,21 +155,43 @@ Cube<pixel_type> getBestMatch(Cube<pixel_type> &targetImg, vector<Cube<pixel_typ
     int argmax = 0;
     vector<float> targetAvgColor = getAvgColor(targetImg);
     double smallest_ed = std::numeric_limits<double>::infinity();
-
+    double greatest_NCC = 0;
+    bool euclidDist = true;
     for(int i = 0; i < (int)(srcImg_List.size()); i++){
         vector<float> srcAvgColor = getAvgColor(srcImg_List[i]);
 
-        double ed = 0;
-        for (int j =0; j < (int)(targetAvgColor.size()); j++){
-            ed += pow((targetAvgColor.at(j) - srcAvgColor.at(j)),2);
-        }
-        ed = sqrt(ed);
-        if (ed < smallest_ed){
-            smallest_ed = ed;
-            argmax = i;
+        if(euclidDist){
+            // sum squared differnce (euclidian dist)
+            double ed = 0;
+            for (int j =0; j < (int)(targetAvgColor.size()); j++){
+                ed += pow((targetAvgColor.at(j) - srcAvgColor.at(j)),2);
+            }
+            // ed = sqrt(ed);
+            if (ed < smallest_ed){
+                smallest_ed = ed;
+                argmax = i;
 
+            }
+        } else {
+            // normalize cross correlation
+            double sumNumerator = 0;
+            double sumDenom1 = 0;
+            double sumDenom2 = 0;
+            double NCC = 0;
+
+            for (int j =0; j < (int)(targetAvgColor.size()); j++){
+                sumNumerator += (targetAvgColor.at(j)*srcAvgColor.at(j));
+                sumDenom1 += pow(targetAvgColor.at(j),2);
+                sumDenom2 += pow(srcAvgColor.at(j),2);
+            }
+            NCC = sumNumerator/sqrt(sumDenom1*sumDenom2);
+            if (NCC > greatest_NCC){
+                greatest_NCC = NCC;
+                argmax = i;
+            }
         }
     }
+
 
     return srcImg_List[argmax];
 
