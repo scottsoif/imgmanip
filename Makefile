@@ -17,7 +17,7 @@ main: main.o
 	$(CC) main.o -o main $(LDFLAGS) $(LDLIBS)
 
 main.o: main.cpp imgmanip/imgio/pch.h.gch imgmanip/imgio/imgio.h imgmanip/homography.h imgmanip/mosaic.h imgmanip/convolution.h
-	$(CC) $(CFLAGS) main.cpp -include imgmanip/imgio/pch.h -I lib/boost_1_77_0
+	$(CC) $(CFLAGS) main.cpp -include imgmanip/imgio/pch.h
 
 imgmanip/imgio/pch.h.gch: imgmanip/imgio/pch.h
 	$(CC) $(CFLAGS) -x c++-header imgmanip/imgio/pch.h -I lib/boost_1_77_0

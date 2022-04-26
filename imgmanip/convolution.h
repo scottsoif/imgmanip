@@ -48,7 +48,7 @@ Cube<pixel_type> convolve2d(string srcImgPath, mat& kernel, int stride){
     Mat<pixel_type> srcImgSlice = srcImg.slice(0);
     
     vector<int> newImgSize =  getConvolvedImgSize(srcImg, kernel, stride);
-    Cube<pixel_type> convolvedImg(newImgSize[0], newImgSize[1], 3);
+    Cube<pixel_type> convolvedImg(newImgSize[0], newImgSize[1], (int)srcImg.n_slices);
     convolvedImg.fill(0);
 
     int rowBoundary = srcImg.n_rows-kernel.n_rows+1;

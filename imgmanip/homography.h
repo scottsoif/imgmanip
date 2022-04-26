@@ -126,4 +126,44 @@ Cube<pixel_type> genHomographyImgCanvas(Cube<int>& srcImg, mat& H_3x3){
 
 }
 
+void homographyCommandLine(string srcImgPath, string homogType) {
+
+
+  Cube<int> srcImg = read_img<int>(srcImgPath);
+  mat H_3x3 = {{0, 0.1}};
+
+  double right_idx = (double)(srcImg.n_cols-1);
+  double bottom_idx = (double)(srcImg.n_rows-1);
+  mat startPoints =  { { 0,  0}, // top-left
+                      {0, right_idx}, //top- right
+                      { bottom_idx, right_idx }, //bottom-right
+                      {bottom_idx, 0}}; // bottom-left
+
+  if(homogType=="spiral"){
+    mat destination = {{0,50},
+                      {50, right_idx+0},
+                      { bottom_idx+0,  right_idx-50 },
+                      {bottom_idx-50, 0+0}};
+    H_3x3 = computeHomography(startPoints, destination);
+
+  }
+  else if (homogType=="triangle"){
+    // something
+  }
+  else {
+        // random test H_matrix
+    H_3x3 = { { -0.0043,  0.0004, -0.4261 },
+              {  0.0020, -0.0054, -0.9046 },
+              {  0.0000,  0.0000, -0.0091 } };
+  }
+  Cube<int> newImg = genHomographyImgCanvas<int>(srcImg, H_3x3);
+
+  string outFileName = "imgs/homog_";
+  int srcNameIdx = srcImgPath.find_last_of("/")+1;
+  outFileName += srcImgPath.substr(srcNameIdx);
+
+  write_img(newImg, outFileName);
+
+  }
+
 #endif

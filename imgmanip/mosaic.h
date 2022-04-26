@@ -367,5 +367,22 @@ Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile
     return canvas_img;
 }
 
+void createMosaicCommandLine(string tgtImgPath, string srcImgDir) {
+
+    int tile_cnt_h = 3, tile_cnt_w = 3;
+
+    cout << "Enter the number of tiles you want in column: ";
+    cin >> tile_cnt_h;
+    cout << "Enter the number of tiles you want in row: ";
+    cin >> tile_cnt_w;
+
+    Cube<int> mosaic_img = create_mosaic<int>(tgtImgPath, srcImgDir, tile_cnt_h, tile_cnt_w);
+    string outFileName = "imgs/mosaic_imgs/mosaic_";
+    int tgtNameIdx = tgtImgPath.find_last_of("/")+1;
+    outFileName += tgtImgPath.substr(tgtNameIdx);
+
+    write_img(mosaic_img, outFileName);
+    }
+
 
 #endif

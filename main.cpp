@@ -2,6 +2,9 @@
 // #include <algorithm>
 // #include <armadillo>
 #include <vector>
+#include <string>
+#include <string_view>
+
 #include "./imgmanip/imgio/imgio.h"
 #include "./imgmanip/homography.h"
 #include "./imgmanip/mosaic.h"
@@ -85,9 +88,6 @@ void testMosiac(){
   write_img (tileHp,"imgs/tiles/tileHp.png");
   cout << "tile Hp avg Color is \nR:\t" << avgHp[0]  << "\nG:\t " << avgHp[1] << "\nB:\t" << avgHp[2] << endl;
 
-
-
-
 }
 
 void test_create_mosaic() {
@@ -107,13 +107,60 @@ void test_create_mosaic() {
 
 void test_convolution() {
   string srcImgPath = "imgs/EC_plaza.png";
+
+  // laplacian filter
   mat kernel = { { 0, -1, 0 },
                  { -1, 4, -1 },
                  { 0, -1, 0 } };
-  kernel /= 9;
-  Cube<int> convolvedImg = convolve2d<int>(srcImgPath, kernel, 2);
+
+    // box filter
+    kernel = {{ 0, 0, 0, 0, 0, 0, 0, 0 } ,
+              { 0, 0, 0, 0, 0, 0, 0, 0 } ,
+              { 0, 0, 1, 1, 1, 1, 0, 0 },
+              { 0, 0, 1, 1, 1, 1, 0, 0 } ,
+              { 0, 0, 1, 1, 1, 1, 0, 0 } ,
+              { 0, 0, 1, 1, 1, 1, 0, 0 } ,
+              { 0, 0, 0, 0, 0, 0, 0, 0 } ,
+              { 0, 0, 0, 0, 0, 0, 0, 0 }  };
+    kernel /= 16; 
+  Cube<int> convolvedImg = convolve2d<int>(srcImgPath, kernel, 5);
   
-  write_img(convolvedImg, "imgs/convolvedImg.png");
+  write_img(convolvedImg, "imgs/conv_results/convolvedImg.png");
+}
+
+class CmdLineArgException: public exception
+{} cmdLineArgException;
+
+void parseArgs(int argc, char const *argv[]){
+  cout << "num args = " << argc << endl;
+
+  if(argc < 2){
+    cout << "\nUsage options:" << endl;
+    cout << "\t" << argv[0] << " —-mosaic 'tgtImage.png' ‘srcDirectory'" << endl;
+    cout << "\t" << argv[0] << " ——homography 'srcImage.png' ['trapezoid' | 'spiral' | 'random']" << endl;
+    cout << "\n\t For custom usage, modify main function and choose from our wide range of tools\n" << endl;
+    return;
+  }
+
+
+  if( string_view(argv[1])=="--mosaic" ) {
+    if(argc<4){
+      cerr << " Expected 3 arguments but only " << argc << " were given\n" << endl;
+      throw cmdLineArgException;
+    }
+    createMosaicCommandLine(string(argv[2]), string(argv[3]));
+      
+  }
+  else if ( string_view(argv[1])=="--homography" ) {
+    if(argc<4){
+      cerr << " Expected 3 arguments but only " << argc << " were given\n" << endl;
+      throw cmdLineArgException;
+    }
+    homographyCommandLine(string(argv[2]), string(argv[3]));
+      
+  }
+
+  // string_view(argv[1]).substr(2);
 }
 
 
@@ -124,7 +171,8 @@ int main(int argc, char const *argv[])
   // testHomography(img);
   // testMosiac();
   // test_create_mosaic();
-  test_convolution();
+  // test_convolution();
+  parseArgs(argc, argv);
 
   return 0;
 }
