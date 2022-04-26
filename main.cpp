@@ -168,6 +168,7 @@ void parseArgs(int argc, char const *argv[]){
 int main(int argc, char const *argv[])
 {
   /* code */
+  // Cube<int> img = read_img<int>("test.jpg");
   // testHomography(img);
   // testMosiac();
   // test_create_mosaic();
