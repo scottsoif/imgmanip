@@ -9,6 +9,7 @@
 #include "./imgmanip/homography.h"
 #include "./imgmanip/mosaic.h"
 #include "./imgmanip/convolution.h"
+#include "./imgmanip/grayscale.h"
 // #include "./imgmanip/imgio/pch.h"
 
 
@@ -128,6 +129,17 @@ void test_convolution() {
   write_img(convolvedImg, "imgs/conv_results/convolvedImg.png");
 }
 
+void test_grayscale(){
+  string srcImgPath = "imgs/tiles/hp_netflix.png";
+  Cube<int> newImgLuma = getGrayScaledImg<int>(srcImgPath);
+  write_img(newImgLuma, "imgs/grayHpLuma.png");
+  Cube<int> newImgAvg = getGrayScaleCustomeShades<int>(srcImgPath,4);
+  write_img(newImgAvg, "imgs/grayHpCustom.png");
+
+
+
+
+}
 class CmdLineArgException: public exception
 {} cmdLineArgException;
 
@@ -173,6 +185,7 @@ int main(int argc, char const *argv[])
   // testMosiac();
   // test_create_mosaic();
   // test_convolution();
+  //test_grayscale();
   parseArgs(argc, argv);
 
   return 0;
