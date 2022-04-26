@@ -15,14 +15,13 @@ typedef std::chrono::duration<double, std::milli> millisec_type;
 
 
 /**
- * @brief create a mosaic version of the image on tgt_img_path from a list of images in the
- *        src_img_dir. The mosaic version of image has tile_cnt_h x tile_cnt_w mosaics
- *
- * @tparam pixel_type The type of the pixel
- * @param tgt_img_path the path to the target image
- * @param src_img_dir the directory containing potential mosaics
- * @param tile_cnt_h the number of tiles in a column of the resulting image
- * @param tile_cnt_w the number of tiles in a row of the resulting image
+ * @brief Get the size of the convolved img 
+ * 
+ * @tparam pixel_type the type of the pixel
+ * @param srcImg the source img
+ * @param kernel the kernel for convolution
+ * @param stride the stride for convolution
+ * @return vector<int> the vector of the height and width of new img 
  */
 
 template<NumericType pixel_type>
@@ -33,14 +32,27 @@ vector<int> getConvolvedImgSize(Cube<pixel_type>& srcImg, mat& kernel, int strid
 
     return {newH, newW};
 }
-
+/**
+ * @brief flip the kernel
+ * 
+ * @param kernel the kernel for convolution
+ * @return mat the flipped kernel
+ */
 mat flipKernel(mat& kernel){
     kernel = fliplr(kernel);
     kernel = flipud(kernel);
     return kernel;
 }
 
-
+/**
+ * @brief Create the new convolved img
+ * 
+ * @tparam pixel_type the type of the pixel
+ * @param srcImgPath the souce image path
+ * @param kernel the kernel used for convolution
+ * @param stride the stride used for convolution
+ * @return Cube<pixel_type> the convolved image
+ */
 template<NumericType pixel_type>
 Cube<pixel_type> convolve2d(string srcImgPath, mat& kernel, int stride){
 
