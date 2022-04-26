@@ -17,7 +17,14 @@ int tempMax(int num1, int num2){
 }
 
 
-
+/**
+ * @brief Given source points and destination points, compute homography matrix
+ * 
+ * @tparam rowColType the pixel type 
+ * @param srcPts the source points
+ * @param destPts the destination points
+ * @return mat the homography matrix
+ */
 template <typename rowColType>
  mat computeHomography (Mat<rowColType>& srcPts, Mat<rowColType>& destPts){
    int n_row = srcPts.n_rows;
@@ -48,12 +55,16 @@ template <typename rowColType>
 
   return H_3x3;
 
-
-
-
  }
-// template <NumericType pixel_type>
-// Cube<pixel_type> applyHomography(mat H_3x3, mat srcPts){
+
+/**
+ * @brief Apply the homography matrix
+ * 
+ * @tparam rowColType the pixel type
+ * @param H_3x3 the homography matrix
+ * @param srcPtsSqueezed the source points 
+ * @return Mat<int> the computed desintation
+ */
 template <typename rowColType>
 Mat<int> applyHomography(mat H_3x3, Mat<rowColType> srcPtsSqueezed){
 
@@ -73,7 +84,13 @@ Mat<int> applyHomography(mat H_3x3, Mat<rowColType> srcPtsSqueezed){
   return destPts_int.t();
 
 }
-
+/**
+ * @brief Get the New Canvas Dimentions
+ * 
+ * @param srcImg the souce image
+ * @param H_3x3 the homography matrix
+ * @return vector<int> the number of rows and number of cols of the new image
+ */
 vector<int> getNewCanvasDims(Cube<int>& srcImg, mat& H_3x3){
 
   double right_idx = (double)(srcImg.n_cols-1);
@@ -89,7 +106,14 @@ vector<int> getNewCanvasDims(Cube<int>& srcImg, mat& H_3x3){
   return {nRows+1, nCols+1};
 
 }
-
+/**
+ * @brief get the warped image
+ * 
+ * @tparam pixel_type the type of pixel
+ * @param srcImg the souce image
+ * @param H_3x3 the homography matrix
+ * @return Cube<pixel_type> the warped image
+ */
 template <NumericType pixel_type>
 Cube<pixel_type> genHomographyImgCanvas(Cube<int>& srcImg, mat& H_3x3){
 
@@ -125,7 +149,12 @@ Cube<pixel_type> genHomographyImgCanvas(Cube<int>& srcImg, mat& H_3x3){
   return newImg;
 
 }
-
+/**
+ * @brief The command line for the homography
+ * 
+ * @param srcImgPath the path of source image
+ * @param homogType the type of homography -- triangle, spiral, random
+ */
 void homographyCommandLine(string srcImgPath, string homogType) {
 
 
