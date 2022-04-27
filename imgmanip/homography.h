@@ -187,7 +187,7 @@ void homographyCommandLine(string srcImgPath, string homogType) {
   }
   Cube<int> newImg = genHomographyImgCanvas<int>(srcImg, H_3x3);
 
-  string outFileName = "imgs/homog_";
+  string outFileName = "imgs/homog_imgs/homog_";
   int srcNameIdx = srcImgPath.find_last_of("/")+1;
   outFileName += srcImgPath.substr(srcNameIdx);
 
