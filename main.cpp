@@ -150,6 +150,7 @@ void parseArgs(int argc, char const *argv[]){
     cout << "\nUsage options:" << endl;
     cout << "\t" << argv[0] << " —-mosaic 'tgtImage.png' ‘srcDirectory'" << endl;
     cout << "\t" << argv[0] << " ——homography 'srcImage.png' ['trapezoid' | 'spiral' | 'random']" << endl;
+    cout << "\t" << argv[0] << " grayscale 'srcImage.png' \n\t\t\toptional: --shades intNumber" << endl;
     cout << "\n\t For custom usage, modify main function and choose from our wide range of tools\n" << endl;
     return;
   }
@@ -171,6 +172,22 @@ void parseArgs(int argc, char const *argv[]){
     homographyCommandLine(string(argv[2]), string(argv[3]));
       
   }
+  else if ( string_view(argv[1])=="--grayscale" ) {
+    if(argc!=3 && argc!=5 ){
+      cerr << " Expected [3 | 5] arguments but " << argc << " were given\n" << endl;
+      throw cmdLineArgException;
+    }
+    if(argc==5){
+      if(string_view(argv[3]).substr(0)!="--shades"){
+        cerr << "Invalid arg\n" << endl;
+        throw cmdLineArgException;
+      }     
+      grayscaleCommandLine(string(argv[2]), string(argv[4]));
+    } else {
+      grayscaleCommandLine(string(argv[2]), "");
+    }
+  }
+
 
   // string_view(argv[1]).substr(2);
 }
@@ -185,7 +202,7 @@ int main(int argc, char const *argv[])
   // testMosiac();
   // test_create_mosaic();
   // test_convolution();
-  //test_grayscale();
+  // test_grayscale();
   parseArgs(argc, argv);
 
   return 0;
