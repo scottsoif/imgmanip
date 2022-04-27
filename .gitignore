@@ -1,3 +1,8 @@
 .DS_Store
 .vscode/
 lib/boost_1_77_0/
+<<<<<<< HEAD
+=======
+lib/.DS_Store
+pch.h.gch
+>>>>>>> 77b9f72fcae63129db6e116056ce720b2ec7a772

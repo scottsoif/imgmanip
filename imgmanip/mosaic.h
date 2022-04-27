@@ -1,7 +1,7 @@
-// module;
+#ifndef MOSAIC_H_
+#define MOSAIC_H_
+
 #include <iostream>
-// #include <algorithm>
-#include <armadillo>
 #include <vector>
 #include <functional>
 #include <future>
@@ -15,13 +15,30 @@ using namespace arma;
 namespace fs = std::filesystem;
 
 typedef std::chrono::duration<double, std::milli> millisec_type;
-
+/**
+ * @brief Print the attribute of the image
+ *
+ * @tparam pixel_type the type of pixel
+ * @param img the image
+ */
 template<NumericType pixel_type>
 void coutImgAttr(Cube<pixel_type> &img){
     cout << "height: " << img.n_rows << endl;
     cout << "width: " << img.n_cols << endl;
 }
 
+
+/**
+ * @brief Crop the image
+ *
+ * @tparam pixel_type the type of pixel
+ * @param srcImg the source image
+ * @param left_top_r left top row
+ * @param left_top_c left top column
+ * @param w width
+ * @param h height
+ * @return Cube<pixel_type> cropped image
+ */
 template <NumericType pixel_type>
 Cube<pixel_type> crop(Cube<pixel_type> &srcImg, int left_top_r, int left_top_c, int w, int h)
 {
@@ -42,7 +59,14 @@ Cube<pixel_type> crop(Cube<pixel_type> &srcImg, int left_top_r, int left_top_c, 
 
     return croppedImg;
 }
-
+/**
+ * @brief Crop the max image with a specific ratio
+ *
+ * @tparam pixel_type the type of pixel
+ * @param srcImg the source image
+ * @param img_out_ratio the width/height
+ * @return Cube<pixel_type> the cropped image
+ */
 template <NumericType pixel_type>
 Cube<pixel_type> maxCrop(Cube<pixel_type> &srcImg, double img_out_ratio)
 {
@@ -83,6 +107,14 @@ Cube<pixel_type> maxCrop(Cube<pixel_type> &srcImg, double img_out_ratio)
 
     return ratioCroppedImg;
 }
+
+/**
+ * @brief Get the Avg Color
+ *
+ * @tparam pixel_type the type of the pixel
+ * @param img the image
+ * @return vector<float> the avgerage of red, green and blue channel
+ */
 template<NumericType pixel_type>
 vector<float> getAvgColor(Cube<pixel_type> &img)
 {
@@ -155,26 +187,55 @@ Cube<pixel_type> getBestMatch(Cube<pixel_type> &targetImg, vector<Cube<pixel_typ
     int argmax = 0;
     vector<float> targetAvgColor = getAvgColor(targetImg);
     double smallest_ed = std::numeric_limits<double>::infinity();
-
+    double greatest_NCC = 0;
+    bool euclidDist = true;
     for(int i = 0; i < (int)(srcImg_List.size()); i++){
         vector<float> srcAvgColor = getAvgColor(srcImg_List[i]);
 
-        double ed = 0;
-        for (int j =0; j < (int)(targetAvgColor.size()); j++){
-            ed += pow((targetAvgColor.at(j) - srcAvgColor.at(j)),2);
-        }
-        ed = sqrt(ed);
-        if (ed < smallest_ed){
-            smallest_ed = ed;
-            argmax = i;
+        if(euclidDist){
+            // sum squared differnce (euclidian dist)
+            double ed = 0;
+            for (int j =0; j < (int)(targetAvgColor.size()); j++){
+                ed += pow((targetAvgColor.at(j) - srcAvgColor.at(j)),2);
+            }
+            // ed = sqrt(ed);
+            if (ed < smallest_ed){
+                smallest_ed = ed;
+                argmax = i;
 
+            }
+        } else {
+            // normalize cross correlation
+            double sumNumerator = 0;
+            double sumDenom1 = 0;
+            double sumDenom2 = 0;
+            double NCC = 0;
+
+            for (int j =0; j < (int)(targetAvgColor.size()); j++){
+                sumNumerator += (targetAvgColor.at(j)*srcAvgColor.at(j));
+                sumDenom1 += pow(targetAvgColor.at(j),2);
+                sumDenom2 += pow(srcAvgColor.at(j),2);
+            }
+            NCC = sumNumerator/sqrt(sumDenom1*sumDenom2);
+            if (NCC > greatest_NCC){
+                greatest_NCC = NCC;
+                argmax = i;
+            }
         }
     }
+
 
     return srcImg_List[argmax];
 
 }
-
+/**
+ * @brief Get the Best Match index of the image between target average color and the source average colors
+ *
+ * @tparam pixel_type the pixel type
+ * @param targetAvgColor the target average color
+ * @param srcAvgColors the list of the average colors of different courses image
+ * @return int the best match index
+ */
 template <NumericType pixel_type>
 int getBestMatchIdx(vector<float> targetAvgColor, vector<vector<float>> &srcAvgColors){
 
@@ -220,7 +281,13 @@ tuple<Cube<pixel_type>, vector<float>>init_tile(Cube<int>&srcImg, double img_out
 
 }
 
-
+/**
+ * @brief Make the function application pipeline
+ *
+ * @tparam T The generic type
+ * @param funcs
+ * @return function<T (T)>
+ */
 template<typename T>
 function<T (T)> makePipeline(const std::vector<std::function<T (T)>>& funcs) {
     return [&funcs] (const T& arg) {
@@ -366,5 +433,28 @@ Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile
 
     return canvas_img;
 }
+/**
+ * @brief Create a Mosaic Command Line
+ *
+ * @param tgtImgPath the target image path
+ * @param srcImgDir the source image directory
+ */
+void createMosaicCommandLine(string tgtImgPath, string srcImgDir) {
+
+    int tile_cnt_h = 3, tile_cnt_w = 3;
+
+    cout << "Enter the number of tiles you want in column: ";
+    cin >> tile_cnt_h;
+    cout << "Enter the number of tiles you want in row: ";
+    cin >> tile_cnt_w;
+
+    Cube<int> mosaic_img = create_mosaic<int>(tgtImgPath, srcImgDir, tile_cnt_h, tile_cnt_w);
+    string outFileName = "imgs/mosaic_imgs/mosaic_";
+    int tgtNameIdx = tgtImgPath.find_last_of("/")+1;
+    outFileName += tgtImgPath.substr(tgtNameIdx);
+
+    write_img(mosaic_img, outFileName);
+    }
 
 
+#endif

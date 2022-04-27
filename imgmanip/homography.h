@@ -1,7 +1,16 @@
+<<<<<<< HEAD
 // module;
 #include <iostream>
 // #include <algorithm>
 #include <armadillo>
+=======
+#ifndef HOMOGRAPHY_H_
+#define HOMOGRAPHY_H_
+
+#include <iostream>
+// #include <algorithm>
+// #include <armadillo>
+>>>>>>> 77b9f72fcae63129db6e116056ce720b2ec7a772
 #include <vector>
 #include "imgio/imgio.h"
 
@@ -15,7 +24,18 @@ int tempMax(int num1, int num2){
 }
 
 
+<<<<<<< HEAD
 
+=======
+/**
+ * @brief Given source points and destination points, compute homography matrix
+ * 
+ * @tparam rowColType the pixel type 
+ * @param srcPts the source points
+ * @param destPts the destination points
+ * @return mat the homography matrix
+ */
+>>>>>>> 77b9f72fcae63129db6e116056ce720b2ec7a772
 template <typename rowColType>
  mat computeHomography (Mat<rowColType>& srcPts, Mat<rowColType>& destPts){
    int n_row = srcPts.n_rows;
@@ -46,12 +66,25 @@ template <typename rowColType>
 
   return H_3x3;
 
+<<<<<<< HEAD
 
 
 
  }
 // template <NumericType pixel_type>
 // Cube<pixel_type> applyHomography(mat H_3x3, mat srcPts){
+=======
+ }
+
+/**
+ * @brief Apply the homography matrix
+ * 
+ * @tparam rowColType the pixel type
+ * @param H_3x3 the homography matrix
+ * @param srcPtsSqueezed the source points 
+ * @return Mat<int> the computed desintation
+ */
+>>>>>>> 77b9f72fcae63129db6e116056ce720b2ec7a772
 template <typename rowColType>
 Mat<int> applyHomography(mat H_3x3, Mat<rowColType> srcPtsSqueezed){
 
@@ -71,11 +104,22 @@ Mat<int> applyHomography(mat H_3x3, Mat<rowColType> srcPtsSqueezed){
   return destPts_int.t();
 
 }
+<<<<<<< HEAD
 
+=======
+/**
+ * @brief Get the New Canvas Dimentions
+ * 
+ * @param srcImg the souce image
+ * @param H_3x3 the homography matrix
+ * @return vector<int> the number of rows and number of cols of the new image
+ */
+>>>>>>> 77b9f72fcae63129db6e116056ce720b2ec7a772
 vector<int> getNewCanvasDims(Cube<int>& srcImg, mat& H_3x3){
 
   double right_idx = (double)(srcImg.n_cols-1);
   double bottom_idx = (double)(srcImg.n_rows-1);
+<<<<<<< HEAD
   mat rightCorners =  { { 0,  right_idx }, // top-right
                         { bottom_idx,  right_idx } }; // bottom-right
 
@@ -88,10 +132,43 @@ vector<int> getNewCanvasDims(Cube<int>& srcImg, mat& H_3x3){
 
 }
 
+=======
+
+
+  mat corners =  { { 0, 0 },                  // top-left
+                  { 0, right_idx },          // top-right
+                  { bottom_idx, right_idx }, // bottom-right
+                  { bottom_idx, 0 } };       // bottom-left
+
+  Mat<int> newCorners = applyHomography(H_3x3, corners);
+  
+  int colMax = newCorners(span::all, 1).max();
+  int colMin = newCorners(span::all, 1).min();
+  int rowMax = newCorners(span::all, 0).max();
+  int rowMin = newCorners(span::all, 0).min();
+  int nCols =colMax-colMin;
+  int nRows =rowMax-rowMin;
+
+  return {nRows+1, nCols+1, abs(colMin), abs(rowMin)};
+
+}
+/**
+ * @brief get the warped image
+ * 
+ * @tparam pixel_type the type of pixel
+ * @param srcImg the souce image
+ * @param H_3x3 the homography matrix
+ * @return Cube<pixel_type> the warped image
+ */
+>>>>>>> 77b9f72fcae63129db6e116056ce720b2ec7a772
 template <NumericType pixel_type>
 Cube<pixel_type> genHomographyImgCanvas(Cube<int>& srcImg, mat& H_3x3){
 
   vector<int> canvasDims =  getNewCanvasDims(srcImg, H_3x3);
+<<<<<<< HEAD
+=======
+  int colOffset=canvasDims[2], rowOffset=canvasDims[3]; 
+>>>>>>> 77b9f72fcae63129db6e116056ce720b2ec7a772
   Cube<pixel_type> newImg(canvasDims[0], canvasDims[1], 3);
   newImg.fill(0);
 
@@ -104,7 +181,11 @@ Cube<pixel_type> genHomographyImgCanvas(Cube<int>& srcImg, mat& H_3x3){
   // int =
   for(int i=0; i<canvasDims[0]; i++){
     for(int j=0; j<canvasDims[1]; j++){
+<<<<<<< HEAD
       srcPt =  { { i,  j } };
+=======
+      srcPt =  { { i-rowOffset,  j-colOffset} };
+>>>>>>> 77b9f72fcae63129db6e116056ce720b2ec7a772
       destPt =  applyHomography(invH_3x3, srcPt);
 
       if (destPt[0] > 0 && destPt[0] <= srcN_rows && destPt[1] > 0 && destPt[1] <= srcN_cols){
@@ -123,4 +204,60 @@ Cube<pixel_type> genHomographyImgCanvas(Cube<int>& srcImg, mat& H_3x3){
   return newImg;
 
 }
+<<<<<<< HEAD
 
+=======
+/**
+ * @brief The command line for the homography
+ * 
+ * @param srcImgPath the path of source image
+ * @param homogType the type of homography -- triangle, spiral, random
+ */
+void homographyCommandLine(string srcImgPath, string homogType) {
+
+
+  Cube<int> srcImg = read_img<int>(srcImgPath);
+  mat H_3x3 = {{0, 0.1}};
+
+  double right_idx = (double)(srcImg.n_cols-1);
+  double bottom_idx = (double)(srcImg.n_rows-1);
+  mat startPoints =  { { 0,  0}, // top-left
+                      {0, right_idx}, //top- right
+                      { bottom_idx, right_idx }, //bottom-right
+                      {bottom_idx, 0}}; // bottom-left
+
+  if(homogType=="spiral"){
+    double shearFactor = .3;
+    double shearDim = shearFactor*(right_idx+bottom_idx)/2;
+    mat destination = {{0,shearDim},
+                      {shearDim, right_idx+0},
+                      { bottom_idx+0,  right_idx-shearDim },
+                      {bottom_idx-shearDim, 0+0}};
+    H_3x3 = computeHomography(startPoints, destination);
+
+  }
+  else if (homogType=="triangle"){
+    // something
+      // mat destination = {{0,right_idx/2},
+      //               {shearDim, right_idx+0},
+      //               { bottom_idx+0,  right_idx-shearDim },
+      //               {bottom_idx-shearDim, 0+0}};
+  }
+  else {
+        // random test H_matrix
+    H_3x3 = { { -0.0043,  0.0004, -0.4261 },
+              {  0.0020, -0.0054, -0.9046 },
+              {  0.0000,  0.0000, -0.0091 } };
+  }
+  Cube<int> newImg = genHomographyImgCanvas<int>(srcImg, H_3x3);
+
+  string outFileName = "imgs/homog_imgs/homog_";
+  int srcNameIdx = srcImgPath.find_last_of("/")+1;
+  outFileName += srcImgPath.substr(srcNameIdx);
+
+  write_img(newImg, outFileName);
+
+  }
+
+#endif
+>>>>>>> 77b9f72fcae63129db6e116056ce720b2ec7a772
