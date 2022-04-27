@@ -2,6 +2,8 @@
 // #include <algorithm>
 #include <armadillo>
 #include <vector>
+#include <chrono>
+
 #include "./imgmanip/imgio/imgio.h"
 #include "./imgmanip/homography.h"
 #include "./imgmanip/mosaic.h"
@@ -98,7 +100,9 @@ void testMosiac(){
 
 
 void test_create_mosaic() {
-  string tgt_img_path = "imgs/tgt_imgs/joy2.jpeg";
+  using namespace std::chrono;
+
+  string tgt_img_path = "imgs/tgt_imgs/columbia.jpeg";
   string src_img_dir = "imgs/src_imgs";
 
   int tile_cnt_h = 3, tile_cnt_w = 3;
@@ -108,8 +112,14 @@ void test_create_mosaic() {
   cout << "Enter the number of tiles you want in row: ";
   cin >> tile_cnt_w;
 
+  auto start = high_resolution_clock::now();
   Cube<int> mosaic_img = create_mosaic<int>(tgt_img_path, src_img_dir, tile_cnt_h, tile_cnt_w);
-  write_img(mosaic_img, "imgs/mosaic_imgs/joy2.jpg");
+  auto stop = high_resolution_clock::now();
+  auto duration = duration_cast<milliseconds>(stop - start);
+  cout << "Time taken by creattest_create_mosaic: "
+    << duration.count() << " milliseconds" << endl;
+    // 2939 ms
+  write_img(mosaic_img, "imgs/mosaic_imgs/columbia.jpg");
 }
 
 

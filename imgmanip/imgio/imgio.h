@@ -1,20 +1,12 @@
 #ifndef IMGIO_H_
 #define IMGIO_H_
 
-<<<<<<< HEAD
-#include <armadillo>
-=======
 // #include <armadillo>
->>>>>>> 77b9f72fcae63129db6e116056ce720b2ec7a772
 #include <iostream>
 #include <functional>
 #include <type_traits>
 
-<<<<<<< HEAD
-#include "pch.hpp"
-=======
 #include "pch.h"
->>>>>>> 77b9f72fcae63129db6e116056ce720b2ec7a772
 // #include <boost/gil.hpp>
 // #include <boost/gil/io/io.hpp>
 // #include <boost/gil/extension/io/jpeg.hpp>
