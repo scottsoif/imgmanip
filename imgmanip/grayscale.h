@@ -40,7 +40,7 @@ Cube<pixel_type> getGrayScaledImg(string srcImgPath){
  * @return Cube<pixel_type> The gray scale image 
  */
 template<NumericType pixel_type>
-Cube<pixel_type> getGrayScaleCustomeShades(string srcImgPath, int numberOfShades){
+Cube<pixel_type> getGrayScaledImg(string srcImgPath, int numberOfShades){
 
     Cube<pixel_type> srcImg = read_img<pixel_type>(srcImgPath);
 
@@ -73,7 +73,7 @@ void grayscaleCommandLine(string srcImgPath, string numShadesArg) {
         try {
             int numShades = stoi(numShadesArg);
             outFileName += numShadesArg + "_shades_";
-            newImgAvg = getGrayScaleCustomeShades<int>(srcImgPath,numShades);
+            newImgAvg = getGrayScaledImg<int>(srcImgPath,numShades);
 
         }
         catch (const std::invalid_argument& ia) {

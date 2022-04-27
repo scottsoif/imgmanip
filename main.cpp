@@ -133,7 +133,7 @@ void test_grayscale(){
   string srcImgPath = "imgs/tiles/hp_netflix.png";
   Cube<int> newImgLuma = getGrayScaledImg<int>(srcImgPath);
   write_img(newImgLuma, "imgs/grayHpLuma.png");
-  Cube<int> newImgAvg = getGrayScaleCustomeShades<int>(srcImgPath,4);
+  Cube<int> newImgAvg = getGrayScaledImg<int>(srcImgPath,4);
   write_img(newImgAvg, "imgs/grayHpCustom.png");
 
 
@@ -202,7 +202,7 @@ int main(int argc, char const *argv[])
   // testMosiac();
   // test_create_mosaic();
   // test_convolution();
-  // test_grayscale();
+  //test_grayscale();
   parseArgs(argc, argv);
 
   return 0;
