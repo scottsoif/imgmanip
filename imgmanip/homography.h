@@ -95,15 +95,23 @@ vector<int> getNewCanvasDims(Cube<int>& srcImg, mat& H_3x3){
 
   double right_idx = (double)(srcImg.n_cols-1);
   double bottom_idx = (double)(srcImg.n_rows-1);
-  mat rightCorners =  { { 0,  right_idx }, // top-right
-                        { bottom_idx,  right_idx } }; // bottom-right
 
-  Mat<int> newRightCorners = applyHomography(H_3x3, rightCorners);
 
-  int nCols = newRightCorners(span::all, 1).max();
-  int nRows = tempMax((int)bottom_idx, newRightCorners(1,0) );
+  mat corners =  { { 0, 0 },                  // top-left
+                  { 0, right_idx },          // top-right
+                  { bottom_idx, right_idx }, // bottom-right
+                  { bottom_idx, 0 } };       // bottom-left
 
-  return {nRows+1, nCols+1};
+  Mat<int> newCorners = applyHomography(H_3x3, corners);
+  
+  int colMax = newCorners(span::all, 1).max();
+  int colMin = newCorners(span::all, 1).min();
+  int rowMax = newCorners(span::all, 0).max();
+  int rowMin = newCorners(span::all, 0).min();
+  int nCols =colMax-colMin;
+  int nRows =rowMax-rowMin;
+
+  return {nRows+1, nCols+1, abs(colMin), abs(rowMin)};
 
 }
 /**
@@ -118,6 +126,7 @@ template <NumericType pixel_type>
 Cube<pixel_type> genHomographyImgCanvas(Cube<int>& srcImg, mat& H_3x3){
 
   vector<int> canvasDims =  getNewCanvasDims(srcImg, H_3x3);
+  int colOffset=canvasDims[2], rowOffset=canvasDims[3]; 
   Cube<pixel_type> newImg(canvasDims[0], canvasDims[1], 3);
   newImg.fill(0);
 
@@ -130,7 +139,7 @@ Cube<pixel_type> genHomographyImgCanvas(Cube<int>& srcImg, mat& H_3x3){
   // int =
   for(int i=0; i<canvasDims[0]; i++){
     for(int j=0; j<canvasDims[1]; j++){
-      srcPt =  { { i,  j } };
+      srcPt =  { { i-rowOffset,  j-colOffset} };
       destPt =  applyHomography(invH_3x3, srcPt);
 
       if (destPt[0] > 0 && destPt[0] <= srcN_rows && destPt[1] > 0 && destPt[1] <= srcN_cols){
@@ -169,15 +178,21 @@ void homographyCommandLine(string srcImgPath, string homogType) {
                       {bottom_idx, 0}}; // bottom-left
 
   if(homogType=="spiral"){
-    mat destination = {{0,50},
-                      {50, right_idx+0},
-                      { bottom_idx+0,  right_idx-50 },
-                      {bottom_idx-50, 0+0}};
+    double shearFactor = .3;
+    double shearDim = shearFactor*(right_idx+bottom_idx)/2;
+    mat destination = {{0,shearDim},
+                      {shearDim, right_idx+0},
+                      { bottom_idx+0,  right_idx-shearDim },
+                      {bottom_idx-shearDim, 0+0}};
     H_3x3 = computeHomography(startPoints, destination);
 
   }
   else if (homogType=="triangle"){
     // something
+      // mat destination = {{0,right_idx/2},
+      //               {shearDim, right_idx+0},
+      //               { bottom_idx+0,  right_idx-shearDim },
+      //               {bottom_idx-shearDim, 0+0}};
   }
   else {
         // random test H_matrix
