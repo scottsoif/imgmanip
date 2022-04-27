@@ -42,7 +42,7 @@ Cube<pixel_type> getGrayScaledImg(string srcImgPath){
 template<NumericType pixel_type>
 Cube<pixel_type> getGrayScaleCustomeShades(string srcImgPath, int numberOfShades){
 
-     Cube<pixel_type> srcImg = read_img<pixel_type>(srcImgPath);
+    Cube<pixel_type> srcImg = read_img<pixel_type>(srcImgPath);
 
     Cube<pixel_type> newImg (srcImg.n_rows, srcImg.n_cols, srcImg.n_slices);
     float conversionFactor = 255/(numberOfShades - 1);
@@ -61,9 +61,32 @@ Cube<pixel_type> getGrayScaleCustomeShades(string srcImgPath, int numberOfShades
 
 }
 
+void grayscaleCommandLine(string srcImgPath, string numShadesArg) {
 
+    Cube<int> newImgAvg;
+    string outFileName = "imgs/grayscale_imgs/grayscale_";
 
+    if(numShadesArg==""){
+        newImgAvg = getGrayScaledImg<int>(srcImgPath);
+    }
+    else {
+        try {
+            int numShades = stoi(numShadesArg);
+            outFileName += numShadesArg + "_shades_";
+            newImgAvg = getGrayScaleCustomeShades<int>(srcImgPath,numShades);
 
+        }
+        catch (const std::invalid_argument& ia) {
+            std::cerr << "\nInvalid argument: " << ia.what() << '\n';
+        }
+    }
+
+    int srcNameIdx = srcImgPath.find_last_of("/")+1;
+    outFileName += srcImgPath.substr(srcNameIdx);
+
+    write_img(newImgAvg, outFileName);
+
+}
 
 
 #endif
