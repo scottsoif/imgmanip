@@ -180,25 +180,25 @@ void homographyCommandLine(string srcImgPath, string homogType) {
   if(homogType=="spiral"){
     double shearFactor = .3;
     double shearDim = shearFactor*(right_idx+bottom_idx)/2;
-    mat destination = {{0,shearDim},
-                      {shearDim, right_idx+0},
-                      { bottom_idx+0,  right_idx-shearDim },
-                      {bottom_idx-shearDim, 0+0}};
+    mat destination = {{0,shearDim}, // top-left
+                      {shearDim, right_idx+0}, // top-right
+                      { bottom_idx+0,  right_idx-shearDim }, // bot-right
+                      {bottom_idx-shearDim, 0+0}}; // bot-left
     H_3x3 = computeHomography(startPoints, destination);
 
   }
   else if (homogType=="triangle"){
-    mat destination = {{0,right_idx/2-right_idx/7},
-                  {0, right_idx/2+right_idx/7},
-                  { bottom_idx,  right_idx },
-                  {bottom_idx, 0+0}};
+    mat destination = {{0,right_idx/2-right_idx/7}, // top-left
+                  {0, right_idx/2+right_idx/7}, // top-right
+                  { bottom_idx,  right_idx }, // bot-right
+                  {bottom_idx, 0+0}}; // bot-left
     H_3x3 = computeHomography(startPoints, destination);
   }
   else if (homogType=="rTrapezoid"){
-    mat destination = {{0,right_idx/3},
-                  {0, right_idx},
-                  { bottom_idx,  right_idx },
-                  {bottom_idx, 0+0}};
+    mat destination = {{0,right_idx/3}, // top-left
+                  {0, right_idx}, // top-right
+                  { bottom_idx,  right_idx }, // top-left
+                  {bottom_idx, 0+0}}; // top-right
     H_3x3 = computeHomography(startPoints, destination);
   }
   else if (homogType=="class_demo"){
