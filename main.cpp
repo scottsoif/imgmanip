@@ -107,48 +107,37 @@ void test_create_mosaic() {
 }
 
 void test_convolution() {
-  // string srcImgPath = "imgs/EC_plaza.png";
-  string srcImgPath = "imgs/tgt_imgs/goat.jpeg";
-  // string srcImgPath = "imgs/grayscale_imgs/grayscale_goat.jpg";
+  string srcImgPath = "imgs/tgt_imgs/goat_small.jpeg";
+  Cube<int> srcImg = read_img<int>(srcImgPath);
+
   // laplacian filter
   mat kernel = { { 0, -1, 0 },
                  { -1, 4, -1 },
-                 { 0, -1, 0 } };
+                 { 0, -1, 0} };
 
-    // box filter
-    // kernel = {{ 0, 0, 0, 0, 0, 0, 0, 0 } ,
-    //           { 0, 0, 0, 0, 0, 0, 0, 0 } ,
-    //           { 0, 0, 1, 1, 1, 1, 0, 0 },
-    //           { 0, 0, 1, 1, 1, 1, 0, 0 } ,
-    //           { 0, 0, 1, 1, 1, 1, 0, 0 } ,
-    //           { 0, 0, 1, 1, 1, 1, 0, 0 } ,
-    //           { 0, 0, 0, 0, 0, 0, 0, 0 } ,
-    //           { 0, 0, 0, 0, 0, 0, 0, 0 }  };
-  // kernel = {{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
-  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
-  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
-  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
-  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
-  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
-  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
-  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
-  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
-  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
-  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
-  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }  };
-    // kernel /= 169; 
-  // kernel = { { -1, 1 }};
-  Cube<int> convolvedImg = convolve2d<int>(srcImgPath, kernel, 1);
-  
+  // box filter
+  mat blur_kernel = {{ 1, 1, 1, 1, 1, 1, 1 } ,
+                     { 1, 1, 1, 1, 1, 1, 1 },
+                     { 1, 1, 1, 1, 1, 1, 1 },
+                     { 1, 1, 1, 1, 1, 1, 1 } ,
+                     { 1, 1, 1, 1, 1, 1, 1 } ,
+                     { 1, 1, 1, 1, 1, 1, 1 } ,
+                     { 1, 1, 1, 1, 1, 1, 1 } };
+    blur_kernel /= 49; 
+  // Cube<int> convolvedImg = convolve2d<int>(srcImg, kernel, 1, true);
+  Cube<int> convolvedImg = convolve2d<int>(srcImg, blur_kernel, 2, false);
+
   write_img(convolvedImg, "imgs/conv_results/convolvedImg.png");
+
 }
 
 void test_grayscale(){
   string srcImgPath = "imgs/tiles/hp_netflix.png";
-  Cube<int> newImgLuma = getGrayScaledImg<int>(srcImgPath);
+  Cube<int> srcImg = read_img<int>(srcImgPath);
+
+  Cube<int> newImgLuma = getGrayScaledImg<int>(srcImg);
   write_img(newImgLuma, "imgs/grayHpLuma.png");
-  Cube<int> newImgAvg = getGrayScaledImg<int>(srcImgPath,4);
+  Cube<int> newImgAvg = getGrayScaledImg<int>(srcImg,4);
   write_img(newImgAvg, "imgs/grayHpCustom.png");
 
 
