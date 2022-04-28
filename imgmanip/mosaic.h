@@ -299,7 +299,7 @@ function<T (T)> makePipeline(const std::vector<std::function<T (T)>>& funcs) {
 }
 
 /**
- * @brief fill the canvas in the region starting from (left_top_r, left_top_c) with the pixels
+ * @brief Fill the canvas in the region starting from (left_top_r, left_top_c) with the pixels
  *         from tiles
  *
  * @tparam pixel_type The type of the pixel
@@ -312,7 +312,15 @@ template<NumericType pixel_type>
 void fill_image(Cube<pixel_type> &canvas, Cube<pixel_type> &tile, int left_top_r, int left_top_c){
     canvas(span(left_top_r, left_top_r + tile.n_rows - 1), span(left_top_c, left_top_c + tile.n_cols - 1), span::all) = tile;
 }
-
+/**
+ * @brief Return whether the tile is dense which means the source image number of rows >= tile_h and number of columns >= tile_w
+ * 
+ * @tparam pixel_type the type of pixel
+ * @param srcImg the source image
+ * @param tile_h the tile heigh
+ * @param tile_w  the tile weight
+ * @return whether the tile is dense
+ */
 template<NumericType pixel_type>
 bool isTileDense(Cube<pixel_type> &srcImg, int tile_h, int tile_w) {
     return (int)srcImg.n_rows >= tile_h && (int)srcImg.n_cols >= tile_w;
@@ -322,7 +330,7 @@ class PreprocessingException: public exception
 {} preprocessingException;
 
 /**
- * @brief create a mosaic version of the image on tgt_img_path from a list of images in the
+ * @brief Create a mosaic version of the image on tgt_img_path from a list of images in the
  *        src_img_dir. The mosaic version of image has tile_cnt_h x tile_cnt_w mosaics
  *
  * @tparam pixel_type The type of the pixel
