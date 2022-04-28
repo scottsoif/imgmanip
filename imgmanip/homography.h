@@ -188,21 +188,42 @@ void homographyCommandLine(string srcImgPath, string homogType) {
 
   }
   else if (homogType=="triangle"){
-    // something
-      // mat destination = {{0,right_idx/2},
-      //               {shearDim, right_idx+0},
-      //               { bottom_idx+0,  right_idx-shearDim },
-      //               {bottom_idx-shearDim, 0+0}};
+    mat destination = {{0,right_idx/2-right_idx/7},
+                  {0, right_idx/2+right_idx/7},
+                  { bottom_idx,  right_idx },
+                  {bottom_idx, 0+0}};
+    H_3x3 = computeHomography(startPoints, destination);
+  }
+  else if (homogType=="rTrapezoid"){
+    mat destination = {{0,right_idx/3},
+                  {0, right_idx},
+                  { bottom_idx,  right_idx },
+                  {bottom_idx, 0+0}};
+    H_3x3 = computeHomography(startPoints, destination);
+  }
+  else if (homogType=="class_demo"){
+
+    // original points
+    // 1483, 1332 // top left
+    // 1696,2144 // top right
+    // 2833, 2156 // bot right
+    // 3086,1336 // bot left
+    mat destination = {{0, 0},
+                  {1696-1483, 2144-1332},
+                  { 2834-1483, 2168-1332 },
+                  {3086-1483, 1329-1336}};
+    H_3x3 = computeHomography(startPoints, destination);
   }
   else {
         // random test H_matrix
+    homogType = "random";
     H_3x3 = { { -0.0043,  0.0004, -0.4261 },
               {  0.0020, -0.0054, -0.9046 },
               {  0.0000,  0.0000, -0.0091 } };
   }
   Cube<int> newImg = genHomographyImgCanvas<int>(srcImg, H_3x3);
 
-  string outFileName = "imgs/homog_imgs/homog_";
+  string outFileName = "imgs/homog_imgs/homog_" + homogType + "_";
   int srcNameIdx = srcImgPath.find_last_of("/")+1;
   outFileName += srcImgPath.substr(srcNameIdx);
 
