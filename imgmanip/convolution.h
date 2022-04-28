@@ -5,6 +5,7 @@
 #include <vector>
 #include <future>
 #include "imgio/imgio.h"
+#include "grayscale.h"
 #include <chrono>
 #include <string>
 
@@ -46,17 +47,19 @@ mat flipKernel(mat& kernel){
  * @brief Create the new convolved img
  * 
  * @tparam pixel_type the type of the pixel
- * @param srcImgPath the souce image path
+ * @param srcImg the souce image
  * @param kernel the kernel used for convolution
  * @param stride the stride used for convolution
  * @return Cube<pixel_type> the convolved image
  */
 template<NumericType pixel_type>
-Cube<pixel_type> convolve2d(string srcImgPath, mat& kernel, int stride){
+Cube<pixel_type> convolve2d(Cube<pixel_type>& srcImg, mat& kernel, int stride, bool grayScale){
 
-    Cube<pixel_type> srcImg = read_img<pixel_type>(srcImgPath);
+    if(grayScale){
+        srcImg = getGrayScaledImg<pixel_type>(srcImg, 255);
+    }
     Mat<pixel_type> srcImgSlice = srcImg.slice(0);
-    
+    cout << "n slices =  " << srcImg.n_slices << endl;
     vector<int> newImgSize =  getConvolvedImgSize(srcImg, kernel, stride);
     Cube<pixel_type> convolvedImg(newImgSize[0], newImgSize[1], (int)srcImg.n_slices);
     convolvedImg.fill(0);
@@ -89,10 +92,6 @@ Cube<pixel_type> convolve2d(string srcImgPath, mat& kernel, int stride){
     return convolvedImg;
 }
 
-
-
-    // croppedImg.subcube(0, 0, 0, (rwEndIdx - rwStartIdx), (clEndIdx - clStartIdx), 2) =
-    //     srcImg.subcube(rwStartIdx, clStartIdx, 0, rwEndIdx, clEndIdx, 2);
 
 
 #endif
