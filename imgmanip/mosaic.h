@@ -444,9 +444,9 @@ void createMosaicCommandLine(string tgtImgPath, string srcImgDir) {
     int tile_cnt_h = 3, tile_cnt_w = 3;
 
     cout << "Enter the number of tiles you want in column: ";
-    cin >> tile_cnt_h;
-    cout << "Enter the number of tiles you want in row: ";
     cin >> tile_cnt_w;
+    cout << "Enter the number of tiles you want in row: ";
+    cin >> tile_cnt_h;
 
     Cube<int> mosaic_img = create_mosaic<int>(tgtImgPath, srcImgDir, tile_cnt_h, tile_cnt_w);
     string outFileName = "imgs/mosaic_imgs/mosaic_";
