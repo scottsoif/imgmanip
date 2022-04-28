@@ -14,7 +14,6 @@ using namespace std;
 using namespace arma;
 namespace fs = std::filesystem;
 
-typedef std::chrono::duration<double, std::milli> millisec_type;
 /**
  * @brief Print the attribute of the image
  * 
