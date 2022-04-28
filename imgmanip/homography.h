@@ -11,12 +11,6 @@ using namespace std;
 using namespace arma;
 
 
-// TODO fix
-int tempMax(int num1, int num2){
-  return (num1 > num2) ? num1 : num2;
-}
-
-
 /**
  * @brief Given source points and destination points, compute homography matrix
  * 

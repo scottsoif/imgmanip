@@ -107,24 +107,39 @@ void test_create_mosaic() {
 }
 
 void test_convolution() {
-  string srcImgPath = "imgs/EC_plaza.png";
-
+  // string srcImgPath = "imgs/EC_plaza.png";
+  string srcImgPath = "imgs/tgt_imgs/goat.jpeg";
+  // string srcImgPath = "imgs/grayscale_imgs/grayscale_goat.jpg";
   // laplacian filter
   mat kernel = { { 0, -1, 0 },
                  { -1, 4, -1 },
                  { 0, -1, 0 } };
 
     // box filter
-    kernel = {{ 0, 0, 0, 0, 0, 0, 0, 0 } ,
-              { 0, 0, 0, 0, 0, 0, 0, 0 } ,
-              { 0, 0, 1, 1, 1, 1, 0, 0 },
-              { 0, 0, 1, 1, 1, 1, 0, 0 } ,
-              { 0, 0, 1, 1, 1, 1, 0, 0 } ,
-              { 0, 0, 1, 1, 1, 1, 0, 0 } ,
-              { 0, 0, 0, 0, 0, 0, 0, 0 } ,
-              { 0, 0, 0, 0, 0, 0, 0, 0 }  };
-    kernel /= 16; 
-  Cube<int> convolvedImg = convolve2d<int>(srcImgPath, kernel, 5);
+    // kernel = {{ 0, 0, 0, 0, 0, 0, 0, 0 } ,
+    //           { 0, 0, 0, 0, 0, 0, 0, 0 } ,
+    //           { 0, 0, 1, 1, 1, 1, 0, 0 },
+    //           { 0, 0, 1, 1, 1, 1, 0, 0 } ,
+    //           { 0, 0, 1, 1, 1, 1, 0, 0 } ,
+    //           { 0, 0, 1, 1, 1, 1, 0, 0 } ,
+    //           { 0, 0, 0, 0, 0, 0, 0, 0 } ,
+    //           { 0, 0, 0, 0, 0, 0, 0, 0 }  };
+  // kernel = {{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
+  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
+  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
+  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
+  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
+  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
+  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
+  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
+  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
+  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
+  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ,
+  //         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }  };
+    // kernel /= 169; 
+  // kernel = { { -1, 1 }};
+  Cube<int> convolvedImg = convolve2d<int>(srcImgPath, kernel, 1);
   
   write_img(convolvedImg, "imgs/conv_results/convolvedImg.png");
 }
@@ -144,13 +159,13 @@ class CmdLineArgException: public exception
 {} cmdLineArgException;
 
 void parseArgs(int argc, char const *argv[]){
-  cout << "num args = " << argc << endl;
+  cout << "num args = " << argc-1 << endl;
 
   if(argc < 2){
     cout << "\nUsage options:" << endl;
     cout << "\t" << argv[0] << " —-mosaic 'tgtImage.png' ‘srcDirectory'" << endl;
-    cout << "\t" << argv[0] << " ——homography 'srcImage.png' ['trapezoid' | 'spiral' | 'random']" << endl;
-    cout << "\t" << argv[0] << " grayscale 'srcImage.png' \n\t\t\toptional: --shades intNumber" << endl;
+    cout << "\t" << argv[0] << " ——homography 'srcImage.png' ['trapezoid' | 'spiral' | 'rTrapezoid' | 'random']" << endl;
+    cout << "\t" << argv[0] << " --grayscale 'srcImage.png' \n\t\t\toptional: --shades intNumber" << endl;
     cout << "\n\t For custom usage, modify main function and choose from our wide range of tools\n" << endl;
     return;
   }
@@ -158,7 +173,7 @@ void parseArgs(int argc, char const *argv[]){
 
   if( string_view(argv[1])=="--mosaic" ) {
     if(argc<4){
-      cerr << " Expected 3 arguments but only " << argc << " were given\n" << endl;
+      cerr << " Expected 3 arguments but only " << argc-1 << " were given\n" << endl;
       throw cmdLineArgException;
     }
     createMosaicCommandLine(string(argv[2]), string(argv[3]));
@@ -166,7 +181,7 @@ void parseArgs(int argc, char const *argv[]){
   }
   else if ( string_view(argv[1])=="--homography" ) {
     if(argc<4){
-      cerr << " Expected 3 arguments but only " << argc << " were given\n" << endl;
+      cerr << " Expected 3 arguments but only " << argc-1 << " were given\n" << endl;
       throw cmdLineArgException;
     }
     homographyCommandLine(string(argv[2]), string(argv[3]));
@@ -174,7 +189,7 @@ void parseArgs(int argc, char const *argv[]){
   }
   else if ( string_view(argv[1])=="--grayscale" ) {
     if(argc!=3 && argc!=5 ){
-      cerr << " Expected [3 | 5] arguments but " << argc << " were given\n" << endl;
+      cerr << " Expected [2 | 4] arguments but " << argc-1 << " were given\n" << endl;
       throw cmdLineArgException;
     }
     if(argc==5){

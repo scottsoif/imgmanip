@@ -90,17 +90,34 @@ struct PixelReader{
           }
   }
 };
-
+/**
+ * @brief Get the extention of the image file  (jpeg, jpg, png)
+ * 
+ * @param filename the name of the image file
+ * @return string the extention of the img file
+ */
 string get_file_extension(string filename) {
   return filename.substr(filename.find_last_of(".") + 1);
 }
-
+/**
+ * @brief 
+ * 
+ * @param filename 
+ * @return true 
+ * @return false 
+ */
 bool is_file_img(string filename) {
   string ext = get_file_extension(filename);
   return ext == "jpeg" || ext == "jpg" || ext == "png";
 }
 
-
+/**
+ * @brief 
+ * 
+ * @tparam pixel_type 
+ * @param filename 
+ * @return Cube<pixel_type> 
+ */
 template <NumericType pixel_type>
 Cube<pixel_type> read_img(string filename) {
   using namespace boost::gil;
@@ -120,7 +137,13 @@ Cube<pixel_type> read_img(string filename) {
 
   return storage;
 }
-
+/**
+ * @brief 
+ * 
+ * @tparam pixel_type 
+ * @param storage 
+ * @param save_path 
+ */
 template <NumericType pixel_type>
 void write_img(Cube<pixel_type> &storage, string save_path) {
   using namespace boost::gil;
@@ -137,6 +160,14 @@ void write_img(Cube<pixel_type> &storage, string save_path) {
     throw "saving image format is not supported!";
 }
 
+/**
+ * @brief 
+ * 
+ * @tparam pixel_type 
+ * @param filenames 
+ * @param pipeline 
+ * @return vector<Cube<pixel_type>> 
+ */
 template <NumericType pixel_type>
 vector<Cube<pixel_type>> read_many_imgs(vector<string>& filenames, function<Cube<pixel_type>(Cube<pixel_type>)> pipeline) {
   vector<Cube<pixel_type>> imgs;

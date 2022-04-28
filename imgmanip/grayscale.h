@@ -60,7 +60,12 @@ Cube<pixel_type> getGrayScaledImg(string srcImgPath, int numberOfShades){
 
 
 }
-
+/**
+ * @brief Create the command line for grayscale operation
+ * 
+ * @param srcImgPath the source image path
+ * @param numShadesArg the number of shades users may need to customize
+ */
 void grayscaleCommandLine(string srcImgPath, string numShadesArg) {
 
     Cube<int> newImgAvg;
