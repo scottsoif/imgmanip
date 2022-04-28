@@ -100,11 +100,11 @@ string get_file_extension(string filename) {
   return filename.substr(filename.find_last_of(".") + 1);
 }
 /**
- * @brief 
+ * @brief Return whether the file is an image or not
  * 
- * @param filename 
- * @return true 
- * @return false 
+ * @param filename the name of the image file
+ * @return whether the file is an image or not
+ * 
  */
 bool is_file_img(string filename) {
   string ext = get_file_extension(filename);
@@ -112,11 +112,11 @@ bool is_file_img(string filename) {
 }
 
 /**
- * @brief 
+ * @brief Read the image
  * 
- * @tparam pixel_type 
- * @param filename 
- * @return Cube<pixel_type> 
+ * @tparam pixel_type the type of the pixel
+ * @param filename the name of the image file
+ * @return Cube<pixel_type> the cube of the image representation
  */
 template <NumericType pixel_type>
 Cube<pixel_type> read_img(string filename) {
@@ -138,11 +138,11 @@ Cube<pixel_type> read_img(string filename) {
   return storage;
 }
 /**
- * @brief 
+ * @brief Write from cube to an image
  * 
- * @tparam pixel_type 
- * @param storage 
- * @param save_path 
+ * @tparam pixel_type the type of the pixel
+ * @param storage the cube of the image representation
+ * @param save_path the path to save the generated image
  */
 template <NumericType pixel_type>
 void write_img(Cube<pixel_type> &storage, string save_path) {
@@ -161,12 +161,12 @@ void write_img(Cube<pixel_type> &storage, string save_path) {
 }
 
 /**
- * @brief 
+ * @brief Read more than one images
  * 
- * @tparam pixel_type 
- * @param filenames 
- * @param pipeline 
- * @return vector<Cube<pixel_type>> 
+ * @tparam pixel_type the type of the pixel
+ * @param filenames the name of the image files
+ * @param pipeline read in image pipeline function
+ * @return vector<Cube<pixel_type>> the vector of cube representations in images
  */
 template <NumericType pixel_type>
 vector<Cube<pixel_type>> read_many_imgs(vector<string>& filenames, function<Cube<pixel_type>(Cube<pixel_type>)> pipeline) {
