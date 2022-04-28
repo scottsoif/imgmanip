@@ -11,8 +11,6 @@
 using namespace std;
 using namespace arma;
 
-typedef std::chrono::duration<double, std::milli> millisec_type;
-
 
 /**
  * @brief Get the size of the convolved img 
