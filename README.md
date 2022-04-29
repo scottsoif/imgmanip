@@ -23,6 +23,18 @@ Below
 
 For future tests, write additional make entry in Makefile.
 
+### Use program
+```
+Usage options:
+        ./main —-mosaic 'tgtImage.png' ‘srcDirectory'
+        ./main ——homography 'srcImage.png' ['trapezoid' | 'spiral' | 'rTrapezoid' | 'random']
+        ./main --grayscale 'srcImage.png' 
+                        optional: --shades intNumber
+
+         For custom usage, modify main function and choose from our wide range of tools
+
+```
+
 ### imgmanip
 
 Each subdirectory in `imgmanip` is a "module." Remember to update Makefile when you add a new "module."
