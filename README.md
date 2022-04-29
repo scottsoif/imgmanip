@@ -28,12 +28,12 @@ You will need to run `./install.sh` to finish setting up these dependencies. ENS
 
 Below
 
-1. First generate precompiled headers
-   '''imgmanip/imgio/pch.h.gch'''
-2. Build the main program
-   '''make'''
-3. Run the program
-   ./main
+1. First generate precompiled headers </br>
+   ```imgmanip/imgio/pch.h.gch```
+2. Build the main program </br>
+   ```make```
+3. Run the program </br>
+   ```./main```
 
 For future tests, write additional make entry in Makefile.
 
