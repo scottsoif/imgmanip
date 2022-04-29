@@ -17,6 +17,7 @@ using namespace arma;
 template<NumericType pixel_type>
 Cube<pixel_type> getGrayScaledImg(Cube<pixel_type> srcImg){
 
+    // algorithm for grayscale sourced from https://tannerhelland.com/2011/10/01/grayscale-image-algorithm-vb6.html
     Cube<pixel_type> newImg (srcImg.n_rows, srcImg.n_cols, srcImg.n_slices);
     float param[3] = {0.3, 0.11, 0.59};
     for(int i =0; i < (int)srcImg.n_rows; i++){
