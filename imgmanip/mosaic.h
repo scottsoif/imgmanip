@@ -14,7 +14,6 @@ using namespace std;
 using namespace arma;
 namespace fs = std::filesystem;
 
-typedef std::chrono::duration<double, std::milli> millisec_type;
 /**
  * @brief Print the attribute of the image
  *
@@ -300,7 +299,7 @@ function<T (T)> makePipeline(const std::vector<std::function<T (T)>>& funcs) {
 }
 
 /**
- * @brief fill the canvas in the region starting from (left_top_r, left_top_c) with the pixels
+ * @brief Fill the canvas in the region starting from (left_top_r, left_top_c) with the pixels
  *         from tiles
  *
  * @tparam pixel_type The type of the pixel
@@ -313,7 +312,15 @@ template<NumericType pixel_type>
 void fill_image(Cube<pixel_type> &canvas, Cube<pixel_type> &tile, int left_top_r, int left_top_c){
     canvas(span(left_top_r, left_top_r + tile.n_rows - 1), span(left_top_c, left_top_c + tile.n_cols - 1), span::all) = tile;
 }
-
+/**
+ * @brief Return whether the tile is dense which means the source image number of rows >= tile_h and number of columns >= tile_w
+ *
+ * @tparam pixel_type the type of pixel
+ * @param srcImg the source image
+ * @param tile_h the tile heigh
+ * @param tile_w  the tile weight
+ * @return whether the tile is dense
+ */
 template<NumericType pixel_type>
 bool isTileDense(Cube<pixel_type> &srcImg, int tile_h, int tile_w) {
     return (int)srcImg.n_rows >= tile_h && (int)srcImg.n_cols >= tile_w;
@@ -323,7 +330,7 @@ class PreprocessingException: public exception
 {} preprocessingException;
 
 /**
- * @brief create a mosaic version of the image on tgt_img_path from a list of images in the
+ * @brief Create a mosaic version of the image on tgt_img_path from a list of images in the
  *        src_img_dir. The mosaic version of image has tile_cnt_h x tile_cnt_w mosaics
  *
  * @tparam pixel_type The type of the pixel
@@ -353,55 +360,81 @@ Cube<pixel_type> create_mosaic(string tgt_img_path, string src_img_dir, int tile
     << tile_h << "," << tile_w << tgt_wh_ratio << endl;
 
 
-
     tgt_img = maxCrop(tgt_img, tgt_wh_ratio);
 
-    auto preprocessed = [&](string img_path) {
-        if (!is_file_img(img_path)) {
-            cerr << "file is not an image: " << img_path << endl;
-            throw preprocessingException;
+    // weird error, if a refernce of the vector is passed into the lambda function (for <future>)
+    // we get that no function matches the call
+    auto load_n_proc_src_imgs_fn = [&](vector<string> img_paths) {
+
+        vector<Cube<pixel_type>> pocessed_imgs;
+
+        for (const string &img_path : img_paths) {
+            if (!is_file_img(img_path)) {
+                cerr << "file is not an image: " << img_path << endl;
+                continue;
+            }
+            Cube<pixel_type> orig_src_img;
+
+            try {
+            orig_src_img = read_img<pixel_type>(img_path);
+            } catch (ios_base::failure const&) {
+                cerr << "image is not loaded: " << img_path << endl;
+                continue;
+            }
+
+            auto bindedMaxCrop = bind(maxCrop<pixel_type>, placeholders::_1, tile_wh_ratio);
+            auto crop_src_img = bindedMaxCrop(orig_src_img);
+
+            auto bindedIsTileDense = bind(isTileDense<pixel_type>, placeholders::_1, tile_h, tile_w);
+            if (!bindedIsTileDense(crop_src_img)) {
+                cerr << "image does not have enough pixels: " << img_path << "\n";
+                continue;
+            }
+
+            auto bindedResize = bind(resize_image<pixel_type>, placeholders::_1, tile_h, tile_w);
+            auto rsz_src_img = bindedResize(crop_src_img);
+
+            pocessed_imgs.push_back(rsz_src_img);
         }
-        Cube<pixel_type> orig_src_img;
-
-        try {
-           orig_src_img = read_img<pixel_type>(img_path);
-        } catch (ios_base::failure const&) {
-            cerr << "image is not loaded: " << img_path << endl;
-            throw preprocessingException;
-        }
-
-        auto bindedMaxCrop = bind(maxCrop<pixel_type>, placeholders::_1, tile_wh_ratio);
-        auto crop_src_img = bindedMaxCrop(orig_src_img);
-
-        auto bindedIsTileDense = bind(isTileDense<pixel_type>, placeholders::_1, tile_h, tile_w);
-        if (!bindedIsTileDense(crop_src_img)) {
-            cerr << "image does not have enough pixels: " << img_path << "\n";
-            throw preprocessingException;
-        }
-
-        auto bindedResize = bind(resize_image<pixel_type>, placeholders::_1, tile_h, tile_w);
-        auto rsz_src_img = bindedResize(crop_src_img);
-
-        return rsz_src_img;
+        return pocessed_imgs;
     };
 
-    vector<future<Cube<pixel_type>>> handles;
-    int src_img_cnt = 0;
-    for (const auto & entry : fs::directory_iterator(src_img_dir)) {
-        handles.push_back(async(preprocessed, entry.path()));
-        if (++src_img_cnt == mosaic_cnt) break;
+
+    // setting up number of source images to process per thread
+    const int thread_cnt = 10;
+    vector<vector<string>> thread_to_args(thread_cnt);
+    vector<string> src_img_paths;
+
+    int curr_thread_id = 0;
+    for (const auto & entry : fs::directory_iterator(src_img_dir))
+        src_img_paths.push_back(entry.path());
+    int src_img_per_thread = src_img_paths.size() / thread_cnt;
+
+    vector<future<vector<Cube<pixel_type>>>> handles;
+    for (int src_img_idx = 0; src_img_idx < src_img_paths.size(); src_img_idx += src_img_per_thread) {
+
+        auto src_img_itr = src_img_paths.begin() + src_img_idx;
+        auto src_img_end_itr = src_img_paths.end();
+
+        if (src_img_idx + src_img_per_thread < src_img_paths.size())
+            src_img_end_itr = src_img_itr + src_img_per_thread;
+
+        vector<string> src_img_paths_args(src_img_itr, src_img_end_itr);
+        handles.push_back(async(load_n_proc_src_imgs_fn, src_img_paths_args));
     }
 
+    // retrieve the source images
     for (auto& handle : handles) {
         try {
-            Cube<pixel_type> img = handle.get();
-            src_imgs.push_back(img);
+            vector<Cube<pixel_type>> imgs = handle.get();
+            for (auto &img : imgs)
+                src_imgs.push_back(img);
         } catch (PreprocessingException &e) {
             cerr << "preprocess failed " << "\n";
         }
     }
 
-    cout << "finish loading src img list" << endl;
+    cout << src_imgs.size() << " src images are loaded" << endl;
 
     Cube<pixel_type> canvas_img(tgt_h, tgt_w, tgt_img.n_slices);
 
@@ -444,9 +477,9 @@ void createMosaicCommandLine(string tgtImgPath, string srcImgDir) {
     int tile_cnt_h = 3, tile_cnt_w = 3;
 
     cout << "Enter the number of tiles you want in column: ";
-    cin >> tile_cnt_h;
-    cout << "Enter the number of tiles you want in row: ";
     cin >> tile_cnt_w;
+    cout << "Enter the number of tiles you want in row: ";
+    cin >> tile_cnt_h;
 
     Cube<int> mosaic_img = create_mosaic<int>(tgtImgPath, srcImgDir, tile_cnt_h, tile_cnt_w);
     string outFileName = "imgs/mosaic_imgs/mosaic_";

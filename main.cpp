@@ -1,12 +1,15 @@
 #include <iostream>
 // #include <algorithm>
-#include <armadillo>
+// #include <armadillo>
 #include <vector>
-#include <chrono>
+#include <string>
+#include <string_view>
 
 #include "./imgmanip/imgio/imgio.h"
 #include "./imgmanip/homography.h"
 #include "./imgmanip/mosaic.h"
+#include "./imgmanip/convolution.h"
+#include "./imgmanip/grayscale.h"
 
 
 using namespace std;
@@ -114,13 +117,99 @@ void test_create_mosaic() {
 
   auto start = high_resolution_clock::now();
   Cube<int> mosaic_img = create_mosaic<int>(tgt_img_path, src_img_dir, tile_cnt_h, tile_cnt_w);
-  auto stop = high_resolution_clock::now();
-  auto duration = duration_cast<milliseconds>(stop - start);
-  cout << "Time taken by creattest_create_mosaic: "
-    << duration.count() << " milliseconds" << endl;
-    // 2939 ms
-  write_img(mosaic_img, "imgs/mosaic_imgs/columbia.jpg");
+  write_img(mosaic_img, "imgs/mosaic_imgs/joy2.jpg");
 }
+
+void test_convolution() {
+  string srcImgPath = "imgs/tgt_imgs/goat_small.jpeg";
+  Cube<int> srcImg = read_img<int>(srcImgPath);
+
+  // laplacian filter
+  mat kernel = { { 0, -1, 0 },
+                 { -1, 4, -1 },
+                 { 0, -1, 0} };
+
+  // box filter
+  mat blur_kernel = {{ 1, 1, 1, 1, 1, 1, 1 } ,
+                     { 1, 1, 1, 1, 1, 1, 1 },
+                     { 1, 1, 1, 1, 1, 1, 1 },
+                     { 1, 1, 1, 1, 1, 1, 1 } ,
+                     { 1, 1, 1, 1, 1, 1, 1 } ,
+                     { 1, 1, 1, 1, 1, 1, 1 } ,
+                     { 1, 1, 1, 1, 1, 1, 1 } };
+    blur_kernel /= 49;
+  // Cube<int> convolvedImg = convolve2d<int>(srcImg, kernel, 1, true);
+  Cube<int> convolvedImg = convolve2d<int>(srcImg, blur_kernel, 2, false);
+
+  write_img(convolvedImg, "imgs/conv_results/convolvedImg.png");
+
+}
+
+void test_grayscale(){
+  string srcImgPath = "imgs/tiles/hp_netflix.png";
+  Cube<int> srcImg = read_img<int>(srcImgPath);
+
+  Cube<int> newImgLuma = getGrayScaledImg<int>(srcImg);
+  write_img(newImgLuma, "imgs/grayHpLuma.png");
+  Cube<int> newImgAvg = getGrayScaledImg<int>(srcImg,4);
+  write_img(newImgAvg, "imgs/grayHpCustom.png");
+
+
+
+
+}
+class CmdLineArgException: public exception
+{} cmdLineArgException;
+
+void parseArgs(int argc, char const *argv[]){
+  cout << "num args = " << argc-1 << endl;
+
+  if(argc < 2){
+    cout << "\nUsage options:" << endl;
+    cout << "\t" << argv[0] << " —-mosaic 'tgtImage.png' ‘srcDirectory'" << endl;
+    cout << "\t" << argv[0] << " ——homography 'srcImage.png' ['trapezoid' | 'spiral' | 'rTrapezoid' | 'random']" << endl;
+    cout << "\t" << argv[0] << " --grayscale 'srcImage.png' \n\t\t\toptional: --shades intNumber" << endl;
+    cout << "\n\t For custom usage, modify main function and choose from our wide range of tools\n" << endl;
+    return;
+  }
+
+
+  if( string_view(argv[1])=="--mosaic" ) {
+    if(argc<4){
+      cerr << " Expected 3 arguments but only " << argc-1 << " were given\n" << endl;
+      throw cmdLineArgException;
+    }
+    createMosaicCommandLine(string(argv[2]), string(argv[3]));
+
+  }
+  else if ( string_view(argv[1])=="--homography" ) {
+    if(argc<4){
+      cerr << " Expected 3 arguments but only " << argc-1 << " were given\n" << endl;
+      throw cmdLineArgException;
+    }
+    homographyCommandLine(string(argv[2]), string(argv[3]));
+
+  }
+  else if ( string_view(argv[1])=="--grayscale" ) {
+    if(argc!=3 && argc!=5 ){
+      cerr << " Expected [2 | 4] arguments but " << argc-1 << " were given\n" << endl;
+      throw cmdLineArgException;
+    }
+    if(argc==5){
+      if(string_view(argv[3]).substr(0)!="--shades"){
+        cerr << "Invalid arg\n" << endl;
+        throw cmdLineArgException;
+      }
+      grayscaleCommandLine(string(argv[2]), string(argv[4]));
+    } else {
+      grayscaleCommandLine(string(argv[2]), "");
+    }
+  }
+
+
+  // string_view(argv[1]).substr(2);
+}
+
 
 
 int main(int argc, char const *argv[])
@@ -131,7 +220,10 @@ int main(int argc, char const *argv[])
   // testHomography(img);
 
   // testMosiac();
-  test_create_mosaic();
+  // test_create_mosaic();
+  // test_convolution();
+  //test_grayscale();
+  parseArgs(argc, argv);
 
   // write_img(img, "test3.jpeg");
   return 0;
