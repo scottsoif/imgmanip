@@ -11,12 +11,6 @@ using namespace std;
 using namespace arma;
 
 
-// TODO fix
-int tempMax(int num1, int num2){
-  return (num1 > num2) ? num1 : num2;
-}
-
-
 /**
  * @brief Given source points and destination points, compute homography matrix
  *
@@ -180,29 +174,50 @@ void homographyCommandLine(string srcImgPath, string homogType) {
   if(homogType=="spiral"){
     double shearFactor = .3;
     double shearDim = shearFactor*(right_idx+bottom_idx)/2;
-    mat destination = {{0,shearDim},
-                      {shearDim, right_idx+0},
-                      { bottom_idx+0,  right_idx-shearDim },
-                      {bottom_idx-shearDim, 0+0}};
+    mat destination = {{0,shearDim}, // top-left
+                      {shearDim, right_idx+0}, // top-right
+                      { bottom_idx+0,  right_idx-shearDim }, // bot-right
+                      {bottom_idx-shearDim, 0+0}}; // bot-left
     H_3x3 = computeHomography(startPoints, destination);
 
   }
   else if (homogType=="triangle"){
-    // something
-      // mat destination = {{0,right_idx/2},
-      //               {shearDim, right_idx+0},
-      //               { bottom_idx+0,  right_idx-shearDim },
-      //               {bottom_idx-shearDim, 0+0}};
+    mat destination = {{0,right_idx/2-right_idx/7}, // top-left
+                  {0, right_idx/2+right_idx/7}, // top-right
+                  { bottom_idx,  right_idx }, // bot-right
+                  {bottom_idx, 0+0}}; // bot-left
+    H_3x3 = computeHomography(startPoints, destination);
+  }
+  else if (homogType=="rTrapezoid"){
+    mat destination = {{0,right_idx/3}, // top-left
+                  {0, right_idx}, // top-right
+                  { bottom_idx,  right_idx }, // top-left
+                  {bottom_idx, 0+0}}; // top-right
+    H_3x3 = computeHomography(startPoints, destination);
+  }
+  else if (homogType=="class_demo"){
+
+    // original points
+    // 1483, 1332 // top left
+    // 1696,2144 // top right
+    // 2833, 2156 // bot right
+    // 3086,1336 // bot left
+    mat destination = {{0, 0},
+                  {1696-1483, 2144-1332},
+                  { 2834-1483, 2168-1332 },
+                  {3086-1483, 1329-1336}};
+    H_3x3 = computeHomography(startPoints, destination);
   }
   else {
         // random test H_matrix
+    homogType = "random";
     H_3x3 = { { -0.0043,  0.0004, -0.4261 },
               {  0.0020, -0.0054, -0.9046 },
               {  0.0000,  0.0000, -0.0091 } };
   }
   Cube<int> newImg = genHomographyImgCanvas<int>(srcImg, H_3x3);
 
-  string outFileName = "imgs/homog_imgs/homog_";
+  string outFileName = "imgs/homog_imgs/homog_" + homogType + "_";
   int srcNameIdx = srcImgPath.find_last_of("/")+1;
   outFileName += srcImgPath.substr(srcNameIdx);
 
