@@ -181,14 +181,14 @@ void homographyCommandLine(string srcImgPath, string homogType) {
     H_3x3 = computeHomography(startPoints, destination);
 
   }
-  else if (homogType=="triangle"){
+  else if (homogType=="trapezoid"){
     mat destination = {{0,right_idx/2-right_idx/7}, // top-left
                   {0, right_idx/2+right_idx/7}, // top-right
                   { bottom_idx,  right_idx }, // bot-right
                   {bottom_idx, 0+0}}; // bot-left
     H_3x3 = computeHomography(startPoints, destination);
   }
-  else if (homogType=="rTrapezoid"){
+  else if (homogType=="rightTrapezoid"){
     mat destination = {{0,right_idx/3}, // top-left
                   {0, right_idx}, // top-right
                   { bottom_idx,  right_idx }, // top-left
@@ -202,10 +202,16 @@ void homographyCommandLine(string srcImgPath, string homogType) {
     // 1696,2144 // top right
     // 2833, 2156 // bot right
     // 3086,1336 // bot left
-    mat destination = {{0, 0},
-                  {1696-1483, 2144-1332},
-                  { 2834-1483, 2168-1332 },
-                  {3086-1483, 1329-1336}};
+    mat srcPts = {{0, 0},
+                   {1483, 1332},
+                   {1483, 1332 },
+                   {1483, 1336}}; 
+    mat tgtPts = {{0, 0},
+                  {1696, 2144},
+                  { 2834, 2168},
+                  {3086, 1329}}; 
+
+    mat destination = tgtPts-srcPts;
     H_3x3 = computeHomography(startPoints, destination);
   }
   else {

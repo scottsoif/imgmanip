@@ -74,8 +74,6 @@ void testMosiac(){
   write_img(resizedImgDown, "imgs/tiles/resized_down_IMG_9738.png");
 
 
-
-
   //should be the hp one
   Cube<int> bestMatchImg = getBestMatch<int>(targetImg, srcImgList);
   write_img (bestMatchImg,"imgs/tiles/bestMatchTargetNight.png");
@@ -88,16 +86,6 @@ void testMosiac(){
   vector<float> avgHp = std::get<1>(tileAndAvgColor);
   write_img (tileHp,"imgs/tiles/tileHp.png");
   cout << "tile Hp avg Color is \nR:\t" << avgHp[0]  << "\nG:\t " << avgHp[1] << "\nB:\t" << avgHp[2] << endl;
-
-
-
-
-
-
-
-
-
-
 
 }
 
@@ -167,7 +155,7 @@ void parseArgs(int argc, char const *argv[]){
   if(argc < 2){
     cout << "\nUsage options:" << endl;
     cout << "\t" << argv[0] << " —-mosaic 'tgtImage.png' ‘srcDirectory'" << endl;
-    cout << "\t" << argv[0] << " ——homography 'srcImage.png' ['trapezoid' | 'spiral' | 'rTrapezoid' | 'random']" << endl;
+    cout << "\t" << argv[0] << " ——homography 'srcImage.png' ['trapezoid' | 'spiral' | 'rightTrapezoid' | 'random']" << endl;
     cout << "\t" << argv[0] << " --grayscale 'srcImage.png' \n\t\t\toptional: --shades intNumber" << endl;
     cout << "\n\t For custom usage, modify main function and choose from our wide range of tools\n" << endl;
     return;
