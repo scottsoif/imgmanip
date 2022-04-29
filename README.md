@@ -1,6 +1,6 @@
 # imgmanip-
 
-Design Using C++ Final Project 
+Design Using C++ Final Project  <br\>
 This is  the image manipulation library implemented in C++. We have the following features: 
 * GrayScale
 * Convolution 
