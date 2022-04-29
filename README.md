@@ -14,6 +14,10 @@ We aim to provide a library package that can treat images with some amazing effe
 
 ## Install Dependencies
 
+Download dependent `lib` via this 
+[link](https://drive.google.com/file/d/1SuQDMeQx98OjBeQ8rfEbOFWIMBUJsmcG/view?usp=sharing) and unzip the folder in the project directory.
+
+
 Install any future dependencies into the `lib` folder. 
 Current dependencies include:
 - `armidillo` for linear algebra, 
