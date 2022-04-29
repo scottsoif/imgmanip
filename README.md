@@ -53,9 +53,6 @@ Usage options:
 
 Each subdirectory in `imgmanip` is a "module." Remember to update Makefile when you add a new "module."
 
-### tests
-
-Contains test executable.
 
 ## Some Demo Operations
 ## Mosaic
@@ -80,8 +77,3 @@ Target image:
 Homography image:
 <br><img src="imgs/homog_imgs/homog_triangle_goat.jpg" width="500"></br>
 
-
-## Future directions
-
-1. Match based on other image features such as those generated via conv nets. This can work towards reducing the number of images needed to construct an accurate images
-2. choosing set of regions vs
