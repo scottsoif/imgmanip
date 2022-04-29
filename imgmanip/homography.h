@@ -202,14 +202,15 @@ void homographyCommandLine(string srcImgPath, string homogType) {
     // 1696,2144 // top right
     // 2833, 2156 // bot right
     // 3086,1336 // bot left
-    mat srcPts = {{0, 0},
-                   {1483, 1332},
-                   {1483, 1332 },
-                   {1483, 1336}}; 
-    mat tgtPts = {{0, 0},
-                  {1696, 2144},
-                  { 2834, 2168},
-                  {3086, 1329}}; 
+    mat srcPts = {{0, 0},          // top left
+                   {1483, 1332},   // top right
+                   {1483, 1332 },  // bot right
+                   {1483, 1336}};  // bot left
+                   
+    mat tgtPts = {{0, 0},          // top left
+                  {1696, 2144},    // top right
+                  { 2834, 2168},   // bot right
+                  {3086, 1329}};   // bot left
 
     mat destination = tgtPts-srcPts;
     H_3x3 = computeHomography(startPoints, destination);
