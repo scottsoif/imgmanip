@@ -1,6 +1,11 @@
 # imgmanip-
 
-Design Using C++ Final Project
+Design Using C++ Final Project  <br\>
+This is  the image manipulation library implemented in C++. We have the following features: 
+* GrayScale
+* Convolution 
+* Image Warping
+* Photo Mosaic
 
 ## Getting Started
 
@@ -23,6 +28,18 @@ Below
 
 For future tests, write additional make entry in Makefile.
 
+### Use program
+```
+Usage options:
+        ./main —-mosaic 'tgtImage.png' ‘srcDirectory'
+        ./main ——homography 'srcImage.png' ['trapezoid' | 'spiral' | 'rTrapezoid' | 'random']
+        ./main --grayscale 'srcImage.png' 
+                        optional: --shades intNumber
+
+         For custom usage, modify main function and choose from our wide range of tools
+
+```
+
 ### imgmanip
 
 Each subdirectory in `imgmanip` is a "module." Remember to update Makefile when you add a new "module."
@@ -34,7 +51,7 @@ Contains test executable.
 ## Demo
 
 Target image:
-![Alt text](imgs/tgt_imgs/goat.jpg)
+![Alt text](imgs/tgt_imgs/goat.jpeg)
 Mosaic image:
 ![Alt text](imgs/mosaic_imgs/mosaic.jpg)
 
