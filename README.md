@@ -1,11 +1,14 @@
 # imgmanip-
 
-Design Using C++ Final Project  <br\>
-This is  the image manipulation library implemented in C++. We have the following features: 
+Design Using C++ Final Project  <br />
+This is  the image manipulation library implemented in C++.  We have the following features: 
 * GrayScale
 * Convolution 
 * Image Warping
-* Photo Mosaic
+* Photo Mosaic<br />
+
+Goal : <br />
+We aim to provide a library package that can treat images with some amazing effects. The GrayScale and Convolution is the basic operation for the image manipulation and widely used. The image warping can be used to make some pictures fit in different shapes. For example, if the company wants to add the advertisement on some irregular surfaces, image warping can help the company to make the logo better fit in that surfaces in the picture. The photo mosaic can be used for business communication. For example, it can be used to document the parties or events with the company's logo as the target images and the employees and event pictures as the source images. 
 
 ## Getting Started
 
@@ -48,12 +51,29 @@ Each subdirectory in `imgmanip` is a "module." Remember to update Makefile when 
 
 Contains test executable.
 
-## Demo
-
+## Some Demo Operations
+## Mosaic
 Target image:
-![Alt text](imgs/tgt_imgs/goat.jpeg)
+<br><img src="imgs/tgt_imgs/goat.jpeg" width="500"></br>
+<!-- ![Alt text](imgs/tgt_imgs/goat.jpeg) -->
 Mosaic image:
-![Alt text](imgs/mosaic_imgs/mosaic.jpg)
+<!-- ![Alt text](imgs/mosaic_imgs/mosaic.jpg) -->
+<br><img src="imgs/mosaic_imgs/mosaic.jpg" width="500"></br>
+
+
+## Grayscale
+Target image:
+<br><img src="imgs/tgt_imgs/goat.jpeg" width="500"></br>
+Grayscale image:
+<br><img src="imgs/grayscale_imgs/grayscale_goat.jpeg" width="500"></br>
+
+
+## Homography
+Target image:
+<br><img src="imgs/tgt_imgs/goat.jpeg" width="500"></br>
+Homography image:
+<br><img src="imgs/homog_imgs/homog_triangle_goat.jpg" width="500"></br>
+
 
 ## Future directions
 
