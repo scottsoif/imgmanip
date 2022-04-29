@@ -14,7 +14,13 @@ We aim to provide a library package that can treat images with some amazing effe
 
 ### Install Dependencies
 
-Install future dependencies into the `lib` folder. Currently, there is only `armidillo` for linear algebra.
+Install any future dependencies into the `lib` folder. 
+Current dependencies include:
+- `armidillo` for linear algebra, 
+- `libjpeg` and `libpng` for decoding images
+- `boost GIL` for reading images
+
+### Important
 
 You will need to run `./install.sh` to finish setting up these dependencies. ENSURE YOU HAVE NO WHITESPACE IN YOUR DIRECTORY PATH.
 
