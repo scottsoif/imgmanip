@@ -65,7 +65,7 @@ Mosaic image:
 Target image:
 <br><img src="imgs/tgt_imgs/goat.jpeg" width="500"></br>
 Grayscale image:
-<br><img src="imgs/grayscale_imgs/grayscale_goat.jpeg" width="500"></br>
+<br><img src="imgs/grayscale_imgs/grayscale_goat.jpg" width="500"></br>
 
 
 ## Homography
