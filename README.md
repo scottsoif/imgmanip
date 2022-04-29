@@ -46,7 +46,7 @@ Contains test executable.
 ## Demo
 
 Target image:
-![Alt text](imgs/tgt_imgs/goat.jpg)
+![Alt text](imgs/tgt_imgs/goat.jpeg)
 Mosaic image:
 ![Alt text](imgs/mosaic_imgs/mosaic.jpg)
 
