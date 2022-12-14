@@ -1,3 +1,5 @@
+## [Keynote Link](https://docs.google.com/presentation/d/1IoGiY_lSn68Nqfg8PnLKfkE7kGm1XMD8MaehnMw_X78/edit#slide=id.p1)
+
 # imgmanip
 
 Design Using C++ Final Project  <br />
